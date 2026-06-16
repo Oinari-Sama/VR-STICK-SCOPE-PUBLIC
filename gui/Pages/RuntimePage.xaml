@@ -35,7 +35,7 @@
             <Border Background="{StaticResource BgCardBrush}" CornerRadius="8" Padding="16">
                 <StackPanel Spacing="8">
                     <TextBlock x:Name="VrChatOscSectionTitle" Text="VRChat OSC出力" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
-                    <TextBlock x:Name="VrChatOscHelpText" Text="この画面で開始したときだけ、補正後の移動入力と右スティックの左右旋回をVRChatのOSCポート 127.0.0.1:9000 へ送ります。アプリを閉じると送信も停止します。" Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap" />
+                    <TextBlock x:Name="VrChatOscHelpText" Text="この画面で開始したときだけ、補正後の移動入力と右スティックの左右旋回をVRChatのOSCポート 127.0.0.1:9000 へ送ります。停止時とアプリ終了時はOSC入力を0へ戻します。" Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap" />
                 </StackPanel>
             </Border>
         </StackPanel>

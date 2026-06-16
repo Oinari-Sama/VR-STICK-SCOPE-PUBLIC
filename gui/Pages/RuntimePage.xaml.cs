@@ -70,20 +70,29 @@ public sealed partial class RuntimePage : Page
 
     private async void BtnStartDiagnostics_Click(object sender, RoutedEventArgs e)
     {
+        await StopEngineGracefullyAsync();
         _runtime.StartDiagnostics();
         await RefreshAsync();
     }
 
     private async void BtnStartOsc_Click(object sender, RoutedEventArgs e)
     {
+        await StopEngineGracefullyAsync();
         _runtime.StartVrChatOsc();
         await RefreshAsync();
     }
 
     private async void BtnStopEngine_Click(object sender, RoutedEventArgs e)
     {
-        _runtime.StopEngine();
+        await StopEngineGracefullyAsync();
         await RefreshAsync();
+    }
+
+    private async System.Threading.Tasks.Task StopEngineGracefullyAsync()
+    {
+        App.IpcClient.SendCommand(new { type = "shutdown" });
+        await System.Threading.Tasks.Task.Delay(300);
+        _runtime.StopEngine();
     }
 
     private async void BtnDisableAutoStart_Click(object sender, RoutedEventArgs e)

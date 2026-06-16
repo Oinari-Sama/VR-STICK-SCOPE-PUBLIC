@@ -61,8 +61,8 @@ public sealed partial class CircleSweepPage : Page
     {
         PageTitle.Text = App.DiagnosticUi.GetText("CircleSweep");
         PageHelpText.Text = App.DiagnosticUi.IsJapanese
-            ? "左スティックは時計回り、右スティックは反時計回りに、オレンジの目標点を追って外周を3周します。特定方向で中心へ落ちる、角度が飛ぶ、真逆に入る症状を検出します。"
-            : "Follow the orange target dot for three turns: clockwise for the left stick, counter-clockwise for the right stick. This detects center drops, angle jumps, and opposite-direction glitches.";
+            ? "SteamVRとVRChatを起動し、HMDを装着してAFKではない状態で操作してください。左スティックは時計回り、右スティックは反時計回りに、オレンジの目標点を追って外周を3周します。"
+            : "Start SteamVR and VRChat, wear the HMD, and stay out of AFK. Follow the orange target dot for three turns: clockwise for the left stick, counter-clockwise for the right stick.";
         GuideTitleText.Text = App.DiagnosticUi.IsJapanese ? "オレンジの点を追って回す" : "Follow the orange dot";
         if (!_collecting && _samples.Count == 0)
         {

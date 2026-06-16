@@ -4,6 +4,8 @@
 #include <vector>
 #include <cstring>
 #include <iostream>
+#include <chrono>
+#include <thread>
 
 #pragma comment(lib, "ws2_32.lib")
 
@@ -11,6 +13,7 @@ OscSender::OscSender() : socketHandle(INVALID_SOCKET) {}
 
 OscSender::~OscSender() {
     if (socketHandle != INVALID_SOCKET) {
+        resetVrChatInputs();
         closesocket((SOCKET)socketHandle);
         WSACleanup();
     }
@@ -74,4 +77,14 @@ void OscSender::sendFloat(const std::string& address, float value) {
     packet.insert(packet.end(), valuePtr, valuePtr + 4);
 
     send((SOCKET)socketHandle, packet.data(), packet.size(), 0);
+}
+
+void OscSender::resetVrChatInputs() {
+    if (socketHandle == INVALID_SOCKET) return;
+    for (int i = 0; i < 3; ++i) {
+        sendFloat("/input/Horizontal", 0.0f);
+        sendFloat("/input/Vertical", 0.0f);
+        sendFloat("/input/LookHorizontal", 0.0f);
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
 }

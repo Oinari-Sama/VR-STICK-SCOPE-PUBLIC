@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using VRStickScope.Pages;
 using VRStickScope.Services;
+using System.Threading;
 
 namespace VRStickScope;
 
@@ -77,6 +78,8 @@ public sealed partial class MainWindow : Window
 
     private void MainWindow_Closed(object sender, WindowEventArgs args)
     {
+        App.IpcClient.SendCommand(new { type = "shutdown" });
+        Thread.Sleep(300);
         App.IpcClient.Stop();
         App.EngineRuntime.StopEngine();
     }

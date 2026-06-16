@@ -31,6 +31,7 @@ static std::mutex g_profileMutex;
 static std::filesystem::path g_profileDir;
 static OscSender g_oscSender;
 static bool g_oscEnabled = false;
+static std::atomic<bool> g_running{true};
 
 static std::filesystem::path getLocalAppData() {
     PWSTR path = nullptr;
@@ -107,6 +108,12 @@ static std::string jsonEscape(const std::string& text) {
         }
     }
     return out;
+}
+
+static void resetOscOutputs() {
+    if (g_oscEnabled) {
+        g_oscSender.resetVrChatInputs();
+    }
 }
 
 static std::filesystem::path writeRuntimeManifest() {
@@ -370,6 +377,9 @@ static void handleCommand(const std::string& json) {
                 g_lutRight = p.right_lut;
             }
         }
+    } else if (type == "shutdown") {
+        resetOscOutputs();
+        g_running = false;
     }
 }
 
@@ -417,7 +427,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     auto lastRetry = std::chrono::steady_clock::now() - std::chrono::seconds(5);
     const auto retryInterval = std::chrono::seconds(5);
 
-    while (true) {
+    while (g_running) {
         if (!vrConnected) {
             auto now = std::chrono::steady_clock::now();
             if (now - lastRetry >= retryInterval) {
@@ -462,6 +472,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
         std::this_thread::sleep_for(std::chrono::milliseconds(16));
     }
+
+    resetOscOutputs();
+    g_ipc.stop();
+    g_vr.disconnect();
+    return 0;
 }
 
 int main() {

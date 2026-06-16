@@ -322,8 +322,8 @@ public sealed class DiagnosticUiStandalone
         ["LanguageToggle"] = "English",
         ["ResetDiagnostics"] = "表示リセット",
         ["StickyDiagnostics"] = "履歴を保持",
-        ["DiagnosticHelp"] = "ここは入力の見える化だけを行います。故障判定や補正作成はここでは行いません。正確な故障診断は「回して故障診断」で、オレンジの目標点を追って3周回してください。",
-        ["NoData"] = "診断データがまだありません。HMDを装着し、スティックをゆっくりと動かしてください。",
+        ["DiagnosticHelp"] = "ここは入力のライブ表示です。故障判定や補正作成は行いません。正確な故障診断は「回して故障診断」を使ってください。",
+        ["NoData"] = "診断データがまだありません。SteamVRとVRChatを起動し、HMDを装着してAFKではない状態でスティックを動かしてください。",
         ["SampleCount"] = "サンプル数",
         ["AvgRadius"] = "平均半径",
         ["RadiusVar"] = "半径のばらつき",
@@ -356,7 +356,7 @@ public sealed class DiagnosticUiStandalone
         ["AutoStartChecking"] = "SteamVR自動起動: 確認中...",
         ["DisableAutoStart"] = "SteamVR自動起動を解除",
         ["VrChatOscSection"] = "VRChat OSC出力",
-        ["VrChatOscHelp"] = "この画面で開始したときだけ、補正後の移動入力と右スティックの左右旋回をVRChatのOSCポート 127.0.0.1:9000 へ送ります。アプリを閉じると送信も停止します。"
+        ["VrChatOscHelp"] = "この画面で開始したときだけ、補正後の移動入力と右スティックの左右旋回をVRChatのOSCポート 127.0.0.1:9000 へ送ります。停止時とアプリ終了時はOSC入力を0へ戻します。"
     };
 
     private static readonly Dictionary<string, string> EnglishStrings = new()
@@ -372,8 +372,8 @@ public sealed class DiagnosticUiStandalone
         ["LanguageToggle"] = "日本語",
         ["ResetDiagnostics"] = "Reset view",
         ["StickyDiagnostics"] = "Keep history",
-        ["DiagnosticHelp"] = "This page only visualizes live input. It does not diagnose faults or create repairs. For diagnosis, use Guided stick test and follow the orange target dot for three turns.",
-        ["NoData"] = "No diagnostic data yet. Wear the HMD and move the stick slowly.",
+        ["DiagnosticHelp"] = "This page only shows live input. It does not diagnose faults or create correction data. For diagnosis, use Guided stick test.",
+        ["NoData"] = "No diagnostic data yet. Start SteamVR and VRChat, wear the HMD, stay out of AFK, and move the stick.",
         ["SampleCount"] = "Samples",
         ["AvgRadius"] = "Average radius",
         ["RadiusVar"] = "Radius variation",
@@ -406,7 +406,7 @@ public sealed class DiagnosticUiStandalone
         ["AutoStartChecking"] = "SteamVR auto start: checking...",
         ["DisableAutoStart"] = "Remove SteamVR auto start",
         ["VrChatOscSection"] = "VRChat OSC output",
-        ["VrChatOscHelp"] = "Only while started from this screen, the tool sends corrected movement input and right-stick horizontal turning to VRChat OSC at 127.0.0.1:9000. Closing the app stops sending."
+        ["VrChatOscHelp"] = "Only while started from this screen, the tool sends corrected movement input and right-stick horizontal turning to VRChat OSC at 127.0.0.1:9000. Stop and app exit reset OSC input to zero."
     };
 
     private sealed class StickAccumulator
