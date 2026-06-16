@@ -17,11 +17,7 @@ public sealed partial class ProfilesPage : Page
     public void ApplyLanguage()
     {
         ProfilesTitle.Text = App.DiagnosticUi.GetText("Profiles");
-        BtnNew.Content = App.DiagnosticUi.GetText("Start"); // Actually "New" key is missing, I'll add to DiagnosticUiStandalone.cs or just use Start? 
-        // Wait, I added "NewProfile" to DiagnosticUiStandalone.cs, but maybe I should add "New" as well.
-        // Let's use "Start" for now if it means New? No, I'll add "New" to the dictionary.
-        
-        BtnNew.Content = App.DiagnosticUi.IsJapanese ? "新規作成" : "New";
+        BtnNew.Content = App.DiagnosticUi.GetText("New");
         BtnOpenFolder.Content = App.DiagnosticUi.GetText("OpenFolder");
         BtnRefresh.Content = App.DiagnosticUi.GetText("Refresh");
         LoadProfiles();

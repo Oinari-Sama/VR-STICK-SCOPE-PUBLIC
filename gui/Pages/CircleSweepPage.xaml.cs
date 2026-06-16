@@ -65,8 +65,8 @@ public sealed partial class CircleSweepPage : Page
     {
         PageTitle.Text = App.DiagnosticUi.GetText("CircleSweep");
         PageHelpText.Text = App.DiagnosticUi.IsJapanese
-            ? "SteamVRとVRChatを起動し、HMDを装着してAFKではない状態で操作してください。左スティックは時計回り、右スティックは反時計回りに、オレンジの目標点を追って外周を3周します。"
-            : "Start SteamVR and VRChat, wear the HMD, and stay out of AFK. Follow the orange target dot for three turns: clockwise for the left stick, counter-clockwise for the right stick.";
+            ? "SteamVRとVRChatを起動し、VRChatが入力を受け付ける状態で操作してください。左スティックは時計回り、右スティックは反時計回りに、オレンジの目標点を追って外周を3周します。"
+            : "Start SteamVR and VRChat, make sure VRChat accepts input, and follow the orange target dot for three turns: clockwise for the left stick, counter-clockwise for the right stick.";
         GuideTitleText.Text = App.DiagnosticUi.IsJapanese ? "オレンジの点を追って回す" : "Follow the orange dot";
         if (!_collecting && _samples.Count == 0)
         {

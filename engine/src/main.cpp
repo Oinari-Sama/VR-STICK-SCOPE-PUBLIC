@@ -146,11 +146,6 @@ static std::filesystem::path writeRuntimeManifest() {
 }
 
 static int configureSteamVrAutostart(bool enable) {
-    if (enable) {
-        writeAutostartLog("install blocked: public build does not enable SteamVR auto start");
-        return 3;
-    }
-
     auto manifestPath = writeRuntimeManifest();
     if (manifestPath.empty()) {
         writeAutostartLog("failed: could not write runtime manifest");
@@ -172,9 +167,16 @@ static int configureSteamVrAutostart(bool enable) {
         return 1;
     }
 
-    apps->SetApplicationAutoLaunch(kSteamVrAppKey, false);
-    apps->RemoveApplicationManifest(manifestPath.string().c_str());
-    writeAutostartLog("ok: autostart disabled");
+    if (enable) {
+        apps->AddApplicationManifest(manifestPath.string().c_str(), false);
+        apps->SetApplicationAutoLaunch(kSteamVrAppKey, true);
+        writeAutostartLog("ok: autostart enabled");
+    } else {
+        apps->SetApplicationAutoLaunch(kSteamVrAppKey, false);
+        apps->RemoveApplicationManifest(manifestPath.string().c_str());
+        writeAutostartLog("ok: autostart disabled");
+    }
+
     vr::VR_Shutdown();
     return 0;
 }

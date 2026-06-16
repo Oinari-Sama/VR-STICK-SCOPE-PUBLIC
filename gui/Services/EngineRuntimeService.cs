@@ -86,6 +86,9 @@ public class EngineRuntimeService
     public Task<bool> UninstallAutoStartAsync()
         => RunEngineCommandAsync("--uninstall-autostart").ContinueWith(t => t.Result == 0);
 
+    public Task<bool> InstallAutoStartAsync()
+        => RunEngineCommandAsync("--install-autostart").ContinueWith(t => t.Result == 0);
+
     private bool StartEngine(bool enableOsc, int port = 9000, bool restartExisting = false)
     {
         if (IsEngineRunning())

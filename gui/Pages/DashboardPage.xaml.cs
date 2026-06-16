@@ -3,6 +3,8 @@ using Microsoft.UI.Xaml.Controls;
 using VRStickScope.Models;
 using VRStickScope.Services;
 using System.Collections.Generic;
+using System;
+using System.Threading.Tasks;
 
 namespace VRStickScope.Pages;
 
@@ -13,13 +15,14 @@ public sealed partial class DashboardPage : Page
     private readonly IpcClientService _ipc = App.IpcClient;
     private readonly List<(float rx, float ry)> _leftTrail = new();
     private readonly List<(float rx, float ry)> _rightTrail = new();
+    private bool _engineStartedForDashboard;
 
     public DashboardPage()
     {
         InitializeComponent();
         ApplyLanguage();
-        _ipc.StateUpdated += OnStateUpdated;
-        Unloaded += (_, _) => _ipc.StateUpdated -= OnStateUpdated;
+        Loaded += DashboardPage_Loaded;
+        Unloaded += DashboardPage_Unloaded;
     }
 
     public void ApplyLanguage()
@@ -36,6 +39,44 @@ public sealed partial class DashboardPage : Page
     private void OnStateUpdated(object? sender, StateUpdatedEventArgs e)
     {
         DispatcherQueue.TryEnqueue(() => UpdateUI(e.State));
+    }
+
+    private async void DashboardPage_Loaded(object sender, RoutedEventArgs e)
+    {
+        _ipc.StateUpdated -= OnStateUpdated;
+        _ipc.StateUpdated += OnStateUpdated;
+        await StartDashboardEngineAsync();
+    }
+
+    private async void DashboardPage_Unloaded(object sender, RoutedEventArgs e)
+    {
+        _ipc.StateUpdated -= OnStateUpdated;
+        await StopDashboardEngineAsync();
+    }
+
+    private async Task StartDashboardEngineAsync()
+    {
+        App.IpcClient.SendCommand(new { type = "shutdown" });
+        await Task.Delay(300);
+        App.EngineRuntime.StopEngine();
+        await _ipc.WaitForDisconnectionAsync(TimeSpan.FromSeconds(2));
+
+        _engineStartedForDashboard = App.EngineRuntime.StartDiagnostics();
+        if (_engineStartedForDashboard)
+        {
+            await _ipc.WaitForConnectionAsync(TimeSpan.FromSeconds(5));
+        }
+    }
+
+    private async Task StopDashboardEngineAsync()
+    {
+        if (!_engineStartedForDashboard) return;
+        _engineStartedForDashboard = false;
+
+        App.IpcClient.SendCommand(new { type = "shutdown" });
+        await Task.Delay(300);
+        App.EngineRuntime.StopEngine();
+        await _ipc.WaitForDisconnectionAsync(TimeSpan.FromSeconds(2));
     }
 
     private void UpdateUI(EngineStateMessage s)

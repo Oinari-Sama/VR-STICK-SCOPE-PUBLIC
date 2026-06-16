@@ -115,14 +115,11 @@ public sealed class DiagnosticUiStandalone
         IReadOnlyList<AngleBinSnapshot> bins = accumulator.GetBins();
         List<AngleBinSnapshot> activeBins = bins.Where(b => b.SampleCount > 0).ToList();
 
-        // 1. スティックの倒し込み不足（一貫したドロップ）
         List<AngleBinSnapshot> dropBins = activeBins
             .Where(b => b.SampleCount >= MinimumSamplesForWarning && b.MaxRadius < DropThreshold)
             .OrderBy(b => b.Degree)
             .ToList();
 
-        // 2. スティックの軌跡が中心に吸い込まれる挙動（不安定な最小半径）
-        // 近隣のビンが外側まで出ているのに、特定のビンで最小値が極端に低い場合を検出
         var collapseBins = new List<AngleBinSnapshot>();
         for (int i = 0; i < BinCount; i++)
         {
@@ -133,7 +130,7 @@ public sealed class DiagnosticUiStandalone
             if (!isCollapse && b.MinRadius < 0.45f)
             {
                 bool neighborOut = false;
-                for (int d = -10; d <= 10; d++) // 範囲を少し広げて検出
+                for (int d = -10; d <= 10; d++)
                 {
                     int idx = (i + d + BinCount) % BinCount;
                     if (bins[idx].SampleCount >= MinimumSamplesForWarning && bins[idx].MaxRadius > 0.8f)
@@ -147,7 +144,6 @@ public sealed class DiagnosticUiStandalone
             if (isCollapse) collapseBins.Add(b);
         }
 
-        // 3. 高い半径の変動（不安定な入力）
         var unstableBins = activeBins
             .Where(b => b.SampleCount >= MinimumSamplesForWarning && (b.MaxRadius - b.MinRadius) > 0.4f)
             .Except(collapseBins)
@@ -158,35 +154,35 @@ public sealed class DiagnosticUiStandalone
         {
             float minR = collapseBins.Min(b => b.MinRadius);
             warnings.Add(IsJapanese
-                ? $"スティックの軌跡が中心に吸い込まれるような挙動が、{FormatRanges(collapseBins)} 度付近で検出されました（最小半径 {minR:0.000}）。ハードウェア故障の可能性が高いです。"
+                ? $"外周入力中に中心へ落ちるような入力を {FormatRanges(collapseBins)} 度付近で検出しました（最小半径 {minR:0.000}）。接点抜けなどの物理故障が疑われます。"
                 : $"Stick trajectory collapse toward center detected near {FormatRanges(collapseBins)} degrees (min radius {minR:0.000}). Likely hardware failure.");
         }
 
         if (unstableBins.Count > 0)
         {
             warnings.Add(IsJapanese
-                ? $"特定角度（{FormatRanges(unstableBins)}度）で入力が非常に不安定です。ハードウェア接点の汚れや摩耗の可能性があります。"
-                : $"Input is very unstable at specific angles ({FormatRanges(unstableBins)} deg). Possible contact dirt or wear.");
+                ? $"{FormatRanges(unstableBins)} 度付近で入力が大きくぶれています。接点汚れ、摩耗、読み取り不良の可能性があります。"
+                : $"Input is very unstable near {FormatRanges(unstableBins)} degrees. Possible contact dirt, wear, or read error.");
         }
 
-        if (dropBins.Count > 0 && collapseBins.Count == 0) // collapseが優先
+        if (dropBins.Count > 0 && collapseBins.Count == 0)
         {
             warnings.Add(IsJapanese
-                ? $"{FormatRanges(dropBins)} 度付近で最大倒し込み量が低く出ています。スティック摩耗、ゲート形状、または軸の読み違いが疑われます。"
+                ? $"{FormatRanges(dropBins)} 度付近で最大入力が弱く出ています。スティック摩耗、ゲート形状、軸読み取りのずれが考えられます。"
                 : $"Low maximum radius near {FormatRanges(dropBins)} degrees. Possible stick wear, gate shape, or axis read issue.");
         }
 
         if (accumulator.OppositeFlipCount > 0)
         {
             warnings.Add(IsJapanese
-                ? $"短時間で約180度反対へ飛ぶ入力を {accumulator.OppositeFlipCount} 回検出しました（直前方向: {FormatDegreeRanges(accumulator.OppositeFlipDegrees)} 度）。ガイドなしでは確定できませんが、真逆入力故障の可能性があります。回して故障診断で確認してください。"
-                : $"Possible 180-degree input flips detected {accumulator.OppositeFlipCount} times (prior directions: {FormatDegreeRanges(accumulator.OppositeFlipDegrees)} deg). Live input cannot prove intent; confirm with Guided stick test.");
+                ? $"短時間で反対方向へ飛ぶ入力を {accumulator.OppositeFlipCount} 回検出しました（直前方向: {FormatDegreeRanges(accumulator.OppositeFlipDegrees)} 度）。正確な判定は回して故障診断で確認してください。"
+                : $"Possible opposite-direction flips detected {accumulator.OppositeFlipCount} times (prior directions: {FormatDegreeRanges(accumulator.OppositeFlipDegrees)} deg). Confirm with Guided stick test.");
         }
 
         if (accumulator.CenterDropCount > 0)
         {
             warnings.Add(IsJapanese
-                ? $"外周入力から一瞬0付近へ落ちる入力を {accumulator.CenterDropCount} 回検出しました（直前方向: {FormatDegreeRanges(accumulator.CenterDropDegrees)} 度）。接点抜けや瞬断の可能性があります。"
+                ? $"外周入力から一瞬中心へ落ちる入力を {accumulator.CenterDropCount} 回検出しました（直前方向: {FormatDegreeRanges(accumulator.CenterDropDegrees)} 度）。接点抜けや断続的な切断の可能性があります。"
                 : $"Momentary drops from outer input toward center detected {accumulator.CenterDropCount} times (prior directions: {FormatDegreeRanges(accumulator.CenterDropDegrees)} deg). Possible contact dropout or intermittent disconnect.");
         }
 
@@ -205,26 +201,26 @@ public sealed class DiagnosticUiStandalone
         if (warnings.Count == 0)
         {
             sb.AppendLine(IsJapanese
-                ? "現時点では、特定角度だけ大きく落ちるパターンは検出されていません。"
+                ? "現時点では、角度ごとに大きく落ちるパターンは検出されていません。"
                 : "No angle-specific drop pattern has been detected yet.");
         }
         else
         {
             if (collapseBins.Count > 0)
-                sb.AppendLine(IsJapanese ? $"吸い込み検出角度: {FormatRanges(collapseBins)}" : $"Collapse angles: {FormatRanges(collapseBins)}");
+                sb.AppendLine(IsJapanese ? $"中心落ち検出角度: {FormatRanges(collapseBins)}" : $"Collapse angles: {FormatRanges(collapseBins)}");
             if (unstableBins.Count > 0)
                 sb.AppendLine(IsJapanese ? $"不安定角度: {FormatRanges(unstableBins)}" : $"Unstable angles: {FormatRanges(unstableBins)}");
             if (dropBins.Count > 0 && collapseBins.Count == 0)
-                sb.AppendLine(IsJapanese ? $"低下角度: {FormatRanges(dropBins)}" : $"Drop angles: {FormatRanges(dropBins)}");
+                sb.AppendLine(IsJapanese ? $"低入力角度: {FormatRanges(dropBins)}" : $"Drop angles: {FormatRanges(dropBins)}");
             if (accumulator.OppositeFlipCount > 0)
-                sb.AppendLine(IsJapanese ? $"真逆入力の可能性: {accumulator.OppositeFlipCount} 回 ({FormatDegreeRanges(accumulator.OppositeFlipDegrees)} 度)" : $"Possible opposite flips: {accumulator.OppositeFlipCount} ({FormatDegreeRanges(accumulator.OppositeFlipDegrees)} deg)");
+                sb.AppendLine(IsJapanese ? $"反対方向へ飛ぶ入力: {accumulator.OppositeFlipCount} 回 ({FormatDegreeRanges(accumulator.OppositeFlipDegrees)} 度)" : $"Possible opposite flips: {accumulator.OppositeFlipCount} ({FormatDegreeRanges(accumulator.OppositeFlipDegrees)} deg)");
             if (accumulator.CenterDropCount > 0)
-                sb.AppendLine(IsJapanese ? $"瞬間0落ちの可能性: {accumulator.CenterDropCount} 回 ({FormatDegreeRanges(accumulator.CenterDropDegrees)} 度)" : $"Possible center dropouts: {accumulator.CenterDropCount} ({FormatDegreeRanges(accumulator.CenterDropDegrees)} deg)");
+                sb.AppendLine(IsJapanese ? $"中心落ち入力: {accumulator.CenterDropCount} 回 ({FormatDegreeRanges(accumulator.CenterDropDegrees)} 度)" : $"Possible center dropouts: {accumulator.CenterDropCount} ({FormatDegreeRanges(accumulator.CenterDropDegrees)} deg)");
         }
 
         sb.AppendLine(IsJapanese
-            ? "この診断は時間で消えません。リセットするまで角度別の記録を保持します。"
-            : "This diagnostic does not fade with time. Angle bins persist until reset.");
+            ? "この診断はリセットするまで角度別の記録を保持します。"
+            : "This diagnostic keeps angle bins until reset.");
 
         return new DiagnosticSummary
         {
@@ -314,7 +310,7 @@ public sealed class DiagnosticUiStandalone
         ["Dashboard"] = "入力を見る",
         ["CircleSweep"] = "回して故障診断",
         ["Profiles"] = "補正データ",
-        ["Runtime"] = "起動と出力",
+        ["Runtime"] = "出力設定",
         ["LeftStick"] = "左スティック",
         ["RightStick"] = "右スティック",
         ["EngineDisconnected"] = "エンジン未接続",
@@ -322,8 +318,8 @@ public sealed class DiagnosticUiStandalone
         ["LanguageToggle"] = "English",
         ["ResetDiagnostics"] = "表示リセット",
         ["StickyDiagnostics"] = "履歴を保持",
-        ["DiagnosticHelp"] = "ここは入力のライブ表示です。故障判定や補正作成は行いません。正確な故障診断は「回して故障診断」を使ってください。",
-        ["NoData"] = "診断データがまだありません。SteamVRとVRChatを起動し、HMDを装着してAFKではない状態でスティックを動かしてください。",
+        ["DiagnosticHelp"] = "現在のスティック入力を確認します。診断や補正作成は「回して故障診断」で行います。",
+        ["NoData"] = "診断データがまだありません。SteamVRとVRChatを起動し、VRChatが入力を受け付ける状態でスティックを動かしてください。",
         ["SampleCount"] = "サンプル数",
         ["AvgRadius"] = "平均半径",
         ["RadiusVar"] = "半径のばらつき",
@@ -335,6 +331,7 @@ public sealed class DiagnosticUiStandalone
         ["NoDirection"] = "方向を選んでください",
         ["Measure"] = "測定開始",
         ["ApplyLUT"] = "補正データを反映",
+        ["New"] = "新規",
         ["NewProfile"] = "新規プロファイル",
         ["ProfileName"] = "プロファイル名",
         ["Create"] = "作成",
@@ -342,21 +339,19 @@ public sealed class DiagnosticUiStandalone
         ["Delete"] = "削除",
         ["DeleteConfirm"] = "このプロファイルを削除しますか？",
         ["Apply"] = "適用",
-        ["Refresh"] = "状態を更新",
-        ["OpenFolder"] = "フォルダを開く",
+        ["Refresh"] = "更新",
+        ["OpenFolder"] = "フォルダーを開く",
         ["Warning"] = "警告",
-        ["RuntimeTitle"] = "エンジン起動とVRChat出力",
-        ["EngineSection"] = "診断エンジン",
-        ["EnginePathChecking"] = "エンジンパス: 確認中...",
-        ["EngineUnknown"] = "エンジン状態: 確認中",
-        ["StartDiagnostics"] = "入力表示用エンジンを開始",
+        ["RuntimeTitle"] = "VRChat出力とSteamVR自動起動",
         ["StartVrChatOsc"] = "VRChatへ補正入力を送る",
-        ["StopEngine"] = "エンジン停止",
-        ["SteamVrAutoStart"] = "SteamVR自動起動の解除",
+        ["StopVrChatOsc"] = "VRChat出力を停止",
+        ["SteamVrAutoStart"] = "SteamVR自動起動",
         ["AutoStartChecking"] = "SteamVR自動起動: 確認中...",
+        ["EnableAutoStart"] = "SteamVR自動起動を有効化",
         ["DisableAutoStart"] = "SteamVR自動起動を解除",
+        ["SteamVrAutoStartHelp"] = "有効にすると、SteamVR起動時にVRChat OSC補正を開始します。不要になったら解除してください。",
         ["VrChatOscSection"] = "VRChat OSC出力",
-        ["VrChatOscHelp"] = "この画面で開始したときだけ、補正後の移動入力と右スティックの左右旋回をVRChatのOSCポート 127.0.0.1:9000 へ送ります。停止時とアプリ終了時はOSC入力を0へ戻します。"
+        ["VrChatOscHelp"] = "補正後の移動入力と旋回入力をVRChatのOSCポート 127.0.0.1:9000 へ送ります。停止時とアプリ終了時はOSC入力を0へ戻します。"
     };
 
     private static readonly Dictionary<string, string> EnglishStrings = new()
@@ -364,16 +359,16 @@ public sealed class DiagnosticUiStandalone
         ["Dashboard"] = "Live input",
         ["CircleSweep"] = "Guided stick test",
         ["Profiles"] = "Correction data",
+        ["Runtime"] = "Output settings",
         ["LeftStick"] = "Left stick",
         ["RightStick"] = "Right stick",
-        ["Runtime"] = "Runtime",
         ["EngineDisconnected"] = "Engine disconnected",
         ["EngineConnected"] = "Engine connected",
         ["LanguageToggle"] = "日本語",
         ["ResetDiagnostics"] = "Reset view",
         ["StickyDiagnostics"] = "Keep history",
-        ["DiagnosticHelp"] = "This page only shows live input. It does not diagnose faults or create correction data. For diagnosis, use Guided stick test.",
-        ["NoData"] = "No diagnostic data yet. Start SteamVR and VRChat, wear the HMD, stay out of AFK, and move the stick.",
+        ["DiagnosticHelp"] = "Shows the current stick input. Use Guided stick test for diagnosis and correction data.",
+        ["NoData"] = "No diagnostic data yet. Start SteamVR and VRChat, make sure VRChat accepts input, and move the stick.",
         ["SampleCount"] = "Samples",
         ["AvgRadius"] = "Average radius",
         ["RadiusVar"] = "Radius variation",
@@ -385,6 +380,7 @@ public sealed class DiagnosticUiStandalone
         ["NoDirection"] = "Choose a direction",
         ["Measure"] = "Start measurement",
         ["ApplyLUT"] = "Apply correction data",
+        ["New"] = "New",
         ["NewProfile"] = "New profile",
         ["ProfileName"] = "Profile name",
         ["Create"] = "Create",
@@ -392,21 +388,19 @@ public sealed class DiagnosticUiStandalone
         ["Delete"] = "Delete",
         ["DeleteConfirm"] = "Delete this profile?",
         ["Apply"] = "Apply",
-        ["Refresh"] = "Refresh status",
+        ["Refresh"] = "Refresh",
         ["OpenFolder"] = "Open folder",
         ["Warning"] = "Warning",
-        ["RuntimeTitle"] = "Engine and VRChat output",
-        ["EngineSection"] = "Diagnostic engine",
-        ["EnginePathChecking"] = "Engine path: checking...",
-        ["EngineUnknown"] = "Engine status: checking",
-        ["StartDiagnostics"] = "Start live-input engine",
+        ["RuntimeTitle"] = "VRChat output and SteamVR auto start",
         ["StartVrChatOsc"] = "Send corrected input to VRChat",
-        ["StopEngine"] = "Stop engine",
-        ["SteamVrAutoStart"] = "Remove SteamVR auto start",
+        ["StopVrChatOsc"] = "Stop VRChat output",
+        ["SteamVrAutoStart"] = "SteamVR auto start",
         ["AutoStartChecking"] = "SteamVR auto start: checking...",
-        ["DisableAutoStart"] = "Remove SteamVR auto start",
+        ["EnableAutoStart"] = "Enable SteamVR auto start",
+        ["DisableAutoStart"] = "Disable SteamVR auto start",
+        ["SteamVrAutoStartHelp"] = "When enabled, VRChat OSC correction starts when SteamVR starts. Disable it when you no longer need it.",
         ["VrChatOscSection"] = "VRChat OSC output",
-        ["VrChatOscHelp"] = "Only while started from this screen, the tool sends corrected movement input and right-stick horizontal turning to VRChat OSC at 127.0.0.1:9000. Stop and app exit reset OSC input to zero."
+        ["VrChatOscHelp"] = "Sends corrected movement and turning input to VRChat OSC at 127.0.0.1:9000. Stop and app exit reset OSC input to zero."
     };
 
     private sealed class StickAccumulator

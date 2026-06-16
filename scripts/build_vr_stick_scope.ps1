@@ -63,7 +63,7 @@ if ($Package) {
     }
 
     $distDir = Join-Path $Root "dist"
-    $packageName = "VR-Stick-Scope-v1.0.4-public"
+    $packageName = "VR-Stick-Scope-v1.0.5-public"
     $packageDir = Join-Path $distDir $packageName
     $zipPath = Join-Path $distDir "$packageName.zip"
 
@@ -91,6 +91,16 @@ if ($Package) {
     }
     Get-ChildItem -LiteralPath $appDir -Recurse -File -Filter "*.pdb" -ErrorAction SilentlyContinue |
         Remove-Item -Force
+    Get-ChildItem -LiteralPath $appDir -Recurse -File -Filter "createdump.exe" -ErrorAction SilentlyContinue |
+        Remove-Item -Force
+    $allowedResourceDirs = @("en-US", "en-us", "ja-JP", "ja-jp")
+    Get-ChildItem -LiteralPath $appDir -Directory -ErrorAction SilentlyContinue |
+        Where-Object {
+            $_.Name -notin $allowedResourceDirs -and
+            (Get-ChildItem -LiteralPath $_.FullName -File -Filter "*.mui" -ErrorAction SilentlyContinue)
+        } |
+        Remove-Item -Recurse -Force
+
     $excludedExtensions = @(".log", ".tmp", ".bak", ".cmd", ".bat", ".ps1", ".user", ".suo", ".ilk", ".iobj", ".ipdb")
     Get-ChildItem -LiteralPath $appDir -Recurse -File -Force |
         Where-Object { $_.Name -like ".*" -or $excludedExtensions -contains $_.Extension.ToLowerInvariant() } |
