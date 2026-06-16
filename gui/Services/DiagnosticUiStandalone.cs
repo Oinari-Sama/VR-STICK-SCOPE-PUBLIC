@@ -317,7 +317,6 @@ public sealed class DiagnosticUiStandalone
         ["Runtime"] = "起動と出力",
         ["LeftStick"] = "左スティック",
         ["RightStick"] = "右スティック",
-        ["Correction"] = "補正を使う",
         ["EngineDisconnected"] = "エンジン未接続",
         ["EngineConnected"] = "エンジン接続中",
         ["LanguageToggle"] = "English",
@@ -351,14 +350,13 @@ public sealed class DiagnosticUiStandalone
         ["EnginePathChecking"] = "エンジンパス: 確認中...",
         ["EngineUnknown"] = "エンジン状態: 確認中",
         ["StartDiagnostics"] = "診断だけ開始",
-        ["StartVrChatOsc"] = "VRChat OSC補正を開始",
+        ["StartVrChatOsc"] = "VRChatへ補正入力を送る",
         ["StopEngine"] = "エンジン停止",
-        ["SteamVrAutoStart"] = "SteamVR起動時のOSC補正",
-        ["AutoStartChecking"] = "OSC補正の自動開始: 確認中...",
-        ["EnableAutoStart"] = "OSC補正の自動開始を有効化",
-        ["DisableAutoStart"] = "OSC補正の自動開始を無効化",
+        ["SteamVrAutoStart"] = "SteamVR自動起動の解除",
+        ["AutoStartChecking"] = "SteamVR自動起動: 確認中...",
+        ["DisableAutoStart"] = "SteamVR自動起動を解除",
         ["VrChatOscSection"] = "VRChat OSC出力",
-        ["VrChatOscHelp"] = "OSC出力は手動開始、または上の自動開始を有効化したSteamVR起動時だけ動きます。補正用エンジンが移動入力と右スティックの左右旋回をVRChatのOSCポート 127.0.0.1:9000 へ送ります。"
+        ["VrChatOscHelp"] = "この画面で開始したときだけ、補正後の移動入力と右スティックの左右旋回をVRChatのOSCポート 127.0.0.1:9000 へ送ります。アプリを閉じると送信も停止します。"
     };
 
     private static readonly Dictionary<string, string> EnglishStrings = new()
@@ -369,7 +367,6 @@ public sealed class DiagnosticUiStandalone
         ["LeftStick"] = "Left stick",
         ["RightStick"] = "Right stick",
         ["Runtime"] = "Runtime",
-        ["Correction"] = "Correction",
         ["EngineDisconnected"] = "Engine disconnected",
         ["EngineConnected"] = "Engine connected",
         ["LanguageToggle"] = "日本語",
@@ -403,14 +400,13 @@ public sealed class DiagnosticUiStandalone
         ["EnginePathChecking"] = "Engine path: checking...",
         ["EngineUnknown"] = "Engine status: checking",
         ["StartDiagnostics"] = "Start diagnostics only",
-        ["StartVrChatOsc"] = "Start VRChat OSC correction",
+        ["StartVrChatOsc"] = "Send corrected input to VRChat",
         ["StopEngine"] = "Stop engine",
-        ["SteamVrAutoStart"] = "OSC correction at SteamVR startup",
-        ["AutoStartChecking"] = "OSC correction auto start: checking...",
-        ["EnableAutoStart"] = "Enable OSC correction auto start",
-        ["DisableAutoStart"] = "Disable OSC correction auto start",
+        ["SteamVrAutoStart"] = "Remove SteamVR auto start",
+        ["AutoStartChecking"] = "SteamVR auto start: checking...",
+        ["DisableAutoStart"] = "Remove SteamVR auto start",
         ["VrChatOscSection"] = "VRChat OSC output",
-        ["VrChatOscHelp"] = "OSC output runs only when started manually or when SteamVR starts with auto start enabled. The correction engine sends movement axes and right-stick horizontal turning to VRChat OSC at 127.0.0.1:9000."
+        ["VrChatOscHelp"] = "Only while started from this screen, the tool sends corrected movement input and right-stick horizontal turning to VRChat OSC at 127.0.0.1:9000. Closing the app stops sending."
     };
 
     private sealed class StickAccumulator

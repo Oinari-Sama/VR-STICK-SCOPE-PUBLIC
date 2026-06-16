@@ -18,6 +18,7 @@ public sealed partial class MainWindow : Window
     {
         InitializeComponent();
         RootGrid.Loaded += MainWindow_Loaded;
+        Closed += MainWindow_Closed;
     }
 
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -74,9 +75,10 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    private void CorrectionToggle_Toggled(object sender, RoutedEventArgs e)
+    private void MainWindow_Closed(object sender, WindowEventArgs args)
     {
-        _ipc.SendCommand(new { type = "set_correction", enabled = CorrectionToggle.IsOn });
+        App.IpcClient.Stop();
+        App.EngineRuntime.StopEngine();
     }
 
     private void LanguageButton_Click(object sender, RoutedEventArgs e)
@@ -112,7 +114,6 @@ public sealed partial class MainWindow : Window
         NavCircle.Content = App.DiagnosticUi.GetText("CircleSweep");
         NavProfiles.Content = App.DiagnosticUi.GetText("Profiles");
         NavRuntime.Content = App.DiagnosticUi.GetText("Runtime");
-        CorrectionToggle.Header = App.DiagnosticUi.GetText("Correction");
         LanguageButton.Content = App.DiagnosticUi.GetText("LanguageToggle");
         StatusText.Text = App.DiagnosticUi.GetText(_isEngineConnected ? "EngineConnected" : "EngineDisconnected");
     }

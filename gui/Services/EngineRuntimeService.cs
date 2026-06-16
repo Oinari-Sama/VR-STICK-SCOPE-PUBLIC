@@ -83,9 +83,6 @@ public class EngineRuntimeService
         };
     }
 
-    public Task<bool> InstallAutoStartAsync()
-        => RunEngineCommandAsync("--install-autostart").ContinueWith(t => t.Result == 0);
-
     public Task<bool> UninstallAutoStartAsync()
         => RunEngineCommandAsync("--uninstall-autostart").ContinueWith(t => t.Result == 0);
 

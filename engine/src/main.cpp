@@ -139,6 +139,11 @@ static std::filesystem::path writeRuntimeManifest() {
 }
 
 static int configureSteamVrAutostart(bool enable) {
+    if (enable) {
+        writeAutostartLog("install blocked: public build does not enable SteamVR auto start");
+        return 3;
+    }
+
     auto manifestPath = writeRuntimeManifest();
     if (manifestPath.empty()) {
         writeAutostartLog("failed: could not write runtime manifest");
@@ -158,39 +163,6 @@ static int configureSteamVrAutostart(bool enable) {
         writeAutostartLog("failed: VRApplications returned null");
         vr::VR_Shutdown();
         return 1;
-    }
-
-    if (enable) {
-        apps->RemoveApplicationManifest(manifestPath.string().c_str());
-        auto addError = apps->AddApplicationManifest(manifestPath.string().c_str(), false);
-        if (addError != vr::VRApplicationError_None &&
-            addError != vr::VRApplicationError_AppKeyAlreadyExists) {
-            writeAutostartLog(std::string("failed: AddApplicationManifest ") + apps->GetApplicationsErrorNameFromEnum(addError));
-            vr::VR_Shutdown();
-            return 1;
-        }
-        uint32_t appCount = apps->GetApplicationCount();
-        writeAutostartLog("application count after add=" + std::to_string(appCount));
-        for (uint32_t i = 0; i < appCount; ++i) {
-            char key[512] = {};
-            auto keyError = apps->GetApplicationKeyByIndex(i, key, sizeof(key));
-            if (keyError == vr::VRApplicationError_None) {
-                std::string keyText = key;
-                if (keyText.find("sindan") != std::string::npos ||
-                    keyText.find("Sindan") != std::string::npos ||
-                    keyText.find("generated") != std::string::npos) {
-                    writeAutostartLog("application key=" + keyText);
-                }
-            }
-        }
-        auto setError = apps->SetApplicationAutoLaunch(kSteamVrAppKey, true);
-        if (setError != vr::VRApplicationError_None) {
-            writeAutostartLog(std::string("failed: SetApplicationAutoLaunch ") + apps->GetApplicationsErrorNameFromEnum(setError));
-        } else {
-            writeAutostartLog("ok: autostart enabled");
-        }
-        vr::VR_Shutdown();
-        return setError == vr::VRApplicationError_None ? 0 : 1;
     }
 
     apps->SetApplicationAutoLaunch(kSteamVrAppKey, false);

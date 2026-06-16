@@ -15,15 +15,13 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBlock x:Name="AppTitleText" Text="VR Stick Scope" FontSize="22" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                 <Ellipse x:Name="StatusDot" Width="10" Height="10" Fill="{StaticResource AccentRedBrush}" />
                 <TextBlock x:Name="StatusText" Text="Engine disconnected" Foreground="{StaticResource TextSecondaryBrush}" />
             </StackPanel>
-            <ToggleSwitch Grid.Column="2" x:Name="CorrectionToggle" Header="Correction" Toggled="CorrectionToggle_Toggled" />
-            <Button Grid.Column="3" x:Name="LanguageButton" Content="English" Click="LanguageButton_Click" />
+            <Button Grid.Column="2" x:Name="LanguageButton" Content="English" Click="LanguageButton_Click" />
         </Grid>
 
         <NavigationView x:Name="NavView"

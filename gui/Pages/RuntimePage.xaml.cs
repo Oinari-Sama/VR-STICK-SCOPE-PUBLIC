@@ -25,7 +25,6 @@ public sealed partial class RuntimePage : Page
         BtnStopEngine.Content = App.DiagnosticUi.GetText("StopEngine");
         BtnRefresh.Content = App.DiagnosticUi.GetText("Refresh");
         AutoStartSectionTitle.Text = App.DiagnosticUi.GetText("SteamVrAutoStart");
-        BtnEnableAutoStart.Content = App.DiagnosticUi.GetText("EnableAutoStart");
         BtnDisableAutoStart.Content = App.DiagnosticUi.GetText("DisableAutoStart");
         VrChatOscSectionTitle.Text = App.DiagnosticUi.GetText("VrChatOscSection");
         VrChatOscHelpText.Text = App.DiagnosticUi.GetText("VrChatOscHelp");
@@ -50,18 +49,18 @@ public sealed partial class RuntimePage : Page
         {
             AutoStartText.Text = state switch
             {
-                SteamVrAutoStartState.Enabled => "SteamVR起動時のOSC補正: 有効",
-                SteamVrAutoStartState.Disabled => "SteamVR起動時のOSC補正: 無効",
-                _ => "SteamVR起動時のOSC補正: 不明"
+                SteamVrAutoStartState.Enabled => "旧バージョンのSteamVR自動起動が残っています",
+                SteamVrAutoStartState.Disabled => "SteamVR自動起動: 未登録",
+                _ => "SteamVR自動起動: 確認できません"
             };
         }
         else
         {
             AutoStartText.Text = state switch
             {
-                SteamVrAutoStartState.Enabled => "OSC correction at SteamVR startup: enabled",
-                SteamVrAutoStartState.Disabled => "OSC correction at SteamVR startup: disabled",
-                _ => "OSC correction at SteamVR startup: unknown"
+                SteamVrAutoStartState.Enabled => "SteamVR auto start from an older version is still registered",
+                SteamVrAutoStartState.Disabled => "SteamVR auto start: not registered",
+                _ => "SteamVR auto start: could not be checked"
             };
         }
     }
@@ -84,12 +83,6 @@ public sealed partial class RuntimePage : Page
     private async void BtnStopEngine_Click(object sender, RoutedEventArgs e)
     {
         _runtime.StopEngine();
-        await RefreshAsync();
-    }
-
-    private async void BtnEnableAutoStart_Click(object sender, RoutedEventArgs e)
-    {
-        await _runtime.InstallAutoStartAsync();
         await RefreshAsync();
     }
 
