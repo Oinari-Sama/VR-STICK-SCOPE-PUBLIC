@@ -4,9 +4,8 @@ project(VRStickScopeEngine VERSION 1.0.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# OpenVR SDK - ヘッダーはthirdparty/openvr/に配置
+# OpenVR SDK headers are placed under thirdparty/openvr/.
 include_directories(${CMAKE_SOURCE_DIR}/thirdparty/openvr/headers)
-include_directories(${CMAKE_SOURCE_DIR}/thirdparty/nlohmann)
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
 # OpenVR shared library
@@ -45,7 +44,7 @@ target_link_libraries(VRStickScopeEngine
     ws2_32     # Windows Sockets 2 for OSC
 )
 
-# OpenVR DLL をビルド出力にコピー
+# Copy OpenVR DLL to the engine output directory.
 add_custom_command(TARGET VRStickScopeEngine POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${CMAKE_SOURCE_DIR}/thirdparty/openvr/bin/win64/openvr_api.dll

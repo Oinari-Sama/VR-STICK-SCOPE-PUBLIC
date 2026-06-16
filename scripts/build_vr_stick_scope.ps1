@@ -63,7 +63,7 @@ if ($Package) {
     }
 
     $distDir = Join-Path $Root "dist"
-    $packageName = "VR-Stick-Scope-v1.0.6-public"
+    $packageName = "VR-Stick-Scope-v1.0.7-public"
     $packageDir = Join-Path $distDir $packageName
     $zipPath = Join-Path $distDir "$packageName.zip"
 
@@ -111,6 +111,10 @@ if ($Package) {
     Copy-Item -LiteralPath (Join-Path $Root "LICENSE") -Destination (Join-Path $docsDir "LICENSE.txt") -Force
     Copy-Item -LiteralPath (Join-Path $Root "docs\ROLLBACK_JA.md") -Destination (Join-Path $docsDir "ROLLBACK_JA.txt") -Force
     Copy-Item -LiteralPath (Join-Path $Root "THIRD_PARTY_NOTICES.md") -Destination (Join-Path $docsDir "THIRD_PARTY_NOTICES.txt") -Force
+    $licenseSourceDir = Join-Path $Root "licenses"
+    if (Test-Path -LiteralPath $licenseSourceDir) {
+        Copy-Item -LiteralPath $licenseSourceDir -Destination (Join-Path $docsDir "licenses") -Recurse -Force
+    }
 
     if (Test-Path -LiteralPath $zipPath) {
         Remove-Item -LiteralPath $zipPath -Force
