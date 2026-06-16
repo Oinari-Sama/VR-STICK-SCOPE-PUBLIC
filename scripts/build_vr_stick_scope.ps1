@@ -63,7 +63,7 @@ if ($Package) {
     }
 
     $distDir = Join-Path $Root "dist"
-    $packageName = "VR-Stick-Scope-v1.0.5-public"
+    $packageName = "VR-Stick-Scope-v1.0.6-public"
     $packageDir = Join-Path $distDir $packageName
     $zipPath = Join-Path $distDir "$packageName.zip"
 
