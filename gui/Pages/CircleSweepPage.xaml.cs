@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace VRStickScope.Pages;
 
@@ -28,6 +29,8 @@ public sealed partial class CircleSweepPage : Page
     private float _guideDeg = float.NaN;
     private float _guideRadius = 1f;
     private int _refinementPass = 0;
+    private bool _collectionCompleted = false;
+    private bool _engineStartedForCollection = false;
     private RefineGuideState _currentRefineGuide = new(float.NaN, 1f, RefineProbePhase.Measure, -1, 0, false);
     private SweepPhase _phase = SweepPhase.Idle;
     private const int TrailLen = 200;
@@ -48,6 +51,7 @@ public sealed partial class CircleSweepPage : Page
     public CircleSweepPage()
     {
         InitializeComponent();
+        NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         ApplyLanguage();
         Loaded += (_, _) =>
         {
@@ -74,7 +78,6 @@ public sealed partial class CircleSweepPage : Page
         BtnStop.Content = App.DiagnosticUi.GetText("Stop");
         BtnClear.Content = App.DiagnosticUi.GetText("Clear");
         BtnBuild.Content = App.DiagnosticUi.GetText("BuildLUT");
-        BtnBuildAutomatic.Content = App.DiagnosticUi.IsJapanese ? "故障部分を補正" : "Repair weak sectors";
         BtnLeft.Content = App.DiagnosticUi.GetText("LeftStick");
         BtnRight.Content = App.DiagnosticUi.GetText("RightStick");
     }
@@ -151,7 +154,7 @@ public sealed partial class CircleSweepPage : Page
                     }
                     else if (_phase != SweepPhase.Refining)
                     {
-                        FinishCollection();
+                        FinishCollection(completed: true);
                     }
                 }
                 if (_phase == SweepPhase.Refining &&
@@ -163,7 +166,7 @@ public sealed partial class CircleSweepPage : Page
                     }
                     else
                     {
-                        FinishCollection();
+                        FinishCollection(completed: true);
                     }
                 }
             }
@@ -196,11 +199,32 @@ public sealed partial class CircleSweepPage : Page
             StatMaxAngleErr.Text = (App.DiagnosticUi.IsJapanese ? "最大の角度飛び: " : "Max angle jump: ") + maxErr.ToString("F0") + "°";
             GuidedDiagnosisText.Text = BuildGuidedDiagnosis();
         }
-        BtnBuild.IsEnabled = !_collecting && _samples.Count >= 100;
-        BtnBuildAutomatic.IsEnabled = !_collecting && _samples.Count >= 100;
+        BtnBuild.IsEnabled = !_collecting && _collectionCompleted && _samples.Count >= 100;
     }
 
-    private void BtnStart_Click(object sender, RoutedEventArgs e)
+    private async void BtnStart_Click(object sender, RoutedEventArgs e)
+    {
+        BtnStart.IsEnabled = false;
+        BtnStop.IsEnabled = false;
+        BtnClear.IsEnabled = false;
+        GuideDirectionText.Text = App.DiagnosticUi.IsJapanese ? "診断エンジン起動中" : "Starting diagnostic engine";
+        GuideWarningText.Text = "";
+
+        if (!await StartDiagnosticEngineForCollectionAsync())
+        {
+            BtnStart.IsEnabled = true;
+            BtnClear.IsEnabled = true;
+            GuideDirectionText.Text = App.DiagnosticUi.IsJapanese ? "診断を開始できません" : "Could not start diagnostics";
+            GuideWarningText.Text = App.DiagnosticUi.IsJapanese
+                ? "診断エンジンに接続できませんでした。SteamVRを起動してからもう一度試してください。"
+                : "Could not connect to the diagnostic engine. Start SteamVR and try again.";
+            return;
+        }
+
+        BeginCollection();
+    }
+
+    private void BeginCollection()
     {
         _samples.Clear();
         _guidedSamples.Clear();
@@ -215,6 +239,7 @@ public sealed partial class CircleSweepPage : Page
         _guideDeg = 0f;
         _guideRadius = 1f;
         _refinementPass = 0;
+        _collectionCompleted = false;
         _currentRefineGuide = new RefineGuideState(float.NaN, 1f, RefineProbePhase.Measure, -1, 0, false);
         _phase = SweepPhase.Primary;
         _collecting = true;
@@ -224,7 +249,6 @@ public sealed partial class CircleSweepPage : Page
         BtnRight.IsEnabled = false;
         BtnClear.IsEnabled = false;
         BtnBuild.IsEnabled = false;
-        BtnBuildAutomatic.IsEnabled = false;
         GuideWarningText.Text = "";
         GuidedDiagnosisText.Text = App.DiagnosticUi.IsJapanese
             ? $"オレンジの点を追って、外周を{GuideDirectionTextValue()}にゆっくり3周してください。"
@@ -233,7 +257,7 @@ public sealed partial class CircleSweepPage : Page
 
     private void BtnStop_Click(object sender, RoutedEventArgs e)
     {
-        FinishCollection();
+        FinishCollection(completed: false);
     }
 
     private void BtnClear_Click(object sender, RoutedEventArgs e)
@@ -248,11 +272,11 @@ public sealed partial class CircleSweepPage : Page
         _guideDeg = float.NaN;
         _guideRadius = 1f;
         _refinementPass = 0;
+        _collectionCompleted = false;
         _currentRefineGuide = new RefineGuideState(float.NaN, 1f, RefineProbePhase.Measure, -1, 0, false);
         _phase = SweepPhase.Idle;
         SampleCountText.Text = $"{App.DiagnosticUi.GetText("SampleCount")}: 0";
         BtnBuild.IsEnabled = false;
-        BtnBuildAutomatic.IsEnabled = false;
         StatAvgR.Text = "---"; StatRadiusVar.Text = "---"; StatMaxAngleErr.Text = "---";
         GuidedDiagnosisText.Text = "---";
         GuideWarningText.Text = "";
@@ -346,24 +370,33 @@ public sealed partial class CircleSweepPage : Page
         return true;
     }
 
-    private void FinishCollection()
+    private void FinishCollection(bool completed)
     {
+        if (!_collecting && _phase == SweepPhase.Complete) return;
+
         _collecting = false;
-        _phase = SweepPhase.Complete;
+        _collectionCompleted = completed;
+        _phase = completed ? SweepPhase.Complete : SweepPhase.Idle;
         _guideDeg = float.NaN;
         BtnStart.IsEnabled = true;
         BtnStop.IsEnabled = false;
         BtnLeft.IsEnabled = true;
         BtnRight.IsEnabled = true;
         BtnClear.IsEnabled = true;
-        GuideDirectionText.Text = App.DiagnosticUi.IsJapanese ? "診断完了" : "Diagnosis complete";
-        GuideProgressText.Text = _refineRanges.Count > 0
-            ? (App.DiagnosticUi.IsJapanese ? "絞り込み検査まで完了" : "Refinement complete")
-            : (App.DiagnosticUi.IsJapanese ? "3周の検査完了" : "Three-turn test complete");
+        BtnBuild.IsEnabled = completed && _samples.Count >= 100;
+        GuideDirectionText.Text = completed
+            ? (App.DiagnosticUi.IsJapanese ? "診断完了" : "Diagnosis complete")
+            : (App.DiagnosticUi.IsJapanese ? "診断を中止しました" : "Diagnosis stopped");
+        GuideProgressText.Text = completed
+            ? (_refineRanges.Count > 0
+                ? (App.DiagnosticUi.IsJapanese ? "絞り込み検査まで完了" : "Refinement complete")
+                : (App.DiagnosticUi.IsJapanese ? "3周の検査完了" : "Three-turn test complete"))
+            : (App.DiagnosticUi.IsJapanese ? "途中で停止しました" : "Stopped before completion");
         GuideWarningText.Text = "";
         _guideRadius = 1f;
         _currentRefineGuide = new RefineGuideState(float.NaN, 1f, RefineProbePhase.Measure, -1, 0, false);
         UpdateStats();
+        _ = StopDiagnosticEngineAfterCollectionAsync();
     }
 
     private RefineGuideState GetRefineGuide(float refineElapsedSeconds)
@@ -743,34 +776,41 @@ public sealed partial class CircleSweepPage : Page
         _lastActualAtUtc = DateTime.MinValue;
     }
 
-    private async void BtnBuildAutomatic_Click(object sender, RoutedEventArgs e)
+    private async Task<bool> StartDiagnosticEngineForCollectionAsync()
     {
-        var lut = new CorrectionLUT();
-        lut.BuildAutomaticSectorRepair(_samples);
+        App.IpcClient.SendCommand(new { type = "shutdown" });
+        await Task.Delay(300);
+        App.EngineRuntime.StopEngine();
+        await _ipc.WaitForDisconnectionAsync(TimeSpan.FromSeconds(2));
 
-        var profiles = App.Profiles.LoadAll();
-        var profile = profiles.FirstOrDefault() ?? new CorrectionProfile
-            { Name = $"Profile {DateTime.Now:yyyy-MM-dd HH:mm}" };
-        if (_isLeft) profile.LeftLut  = lut;
-        else         profile.RightLut = lut;
-        App.Profiles.Save(profile);
+        _engineStartedForCollection = App.EngineRuntime.StartDiagnostics();
+        if (!_engineStartedForCollection) return false;
 
-        App.IpcClient.SendLut(_isLeft ? "left" : "right", lut);
+        return await _ipc.WaitForConnectionAsync(TimeSpan.FromSeconds(8));
+    }
 
-        var dialog = new ContentDialog
-        {
-            Title = App.DiagnosticUi.IsJapanese ? "パーソナル補正生成完了" : "Personal Repair LUT created",
-            Content = App.DiagnosticUi.IsJapanese ? $"{_samples.Count}サンプルから自動セクター補正（パーソナル補正）を生成し、エンジンに送信しました。\n局所的な抜け（セクター崩れ）や不安定な入力を検出し、周囲の入力または全体の外周に合わせて強度を自動調整しています。\n\n【制限事項】\n・物理的な接点の完全な破損や、0への急激な落ち込みには対応しきれない場合があります。\n・補正強度はスパイクを防ぐため最大1.5倍に制限されています。" : $"Generated Automatic Sector Repair LUT from {_samples.Count} samples and sent to engine. It detects local collapses and unstable sectors and adjusts strength automatically based on surrounding or global outer envelope.",
-            CloseButtonText = "OK",
-            XamlRoot = XamlRoot
-        };
-        await dialog.ShowAsync();
+    private async Task StopDiagnosticEngineAfterCollectionAsync()
+    {
+        if (!_engineStartedForCollection) return;
+
+        _engineStartedForCollection = false;
+        App.IpcClient.SendCommand(new { type = "shutdown" });
+        await Task.Delay(300);
+        App.EngineRuntime.StopEngine();
     }
 
     private async void BtnBuild_Click(object sender, RoutedEventArgs e)
     {
         var lut = new CorrectionLUT();
         lut.BuildFromCircleSweep(_samples);
+        var correctedSamples = _samples
+            .Select(s =>
+            {
+                var corrected = lut.Apply(s.rx, s.ry);
+                return (s.rx, s.ry, corrected.cx, corrected.cy);
+            })
+            .ToList();
+        lut.BuildAutomaticSectorRepairFromCorrected(correctedSamples);
 
         var profiles = App.Profiles.LoadAll();
         var profile = profiles.FirstOrDefault() ?? new CorrectionProfile
@@ -783,8 +823,10 @@ public sealed partial class CircleSweepPage : Page
 
         var dialog = new ContentDialog
         {
-            Title = App.DiagnosticUi.IsJapanese ? "LUT生成完了" : "LUT generation complete",
-            Content = App.DiagnosticUi.IsJapanese ? $"{_samples.Count}サンプルからLUTを生成し、エンジンに送信しました。" : $"Generated LUT from {_samples.Count} samples and sent to engine.",
+            Title = App.DiagnosticUi.IsJapanese ? "補正データ生成完了" : "Correction data created",
+            Content = App.DiagnosticUi.IsJapanese
+                ? $"{_samples.Count}サンプルから補正データを生成して保存しました。次にVRChatへ補正入力を送ると、この補正データが使われます。"
+                : $"Created correction data from {_samples.Count} samples. It will be used the next time corrected input is sent to VRChat.",
             CloseButtonText = "OK",
             XamlRoot = XamlRoot
         };

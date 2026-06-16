@@ -34,7 +34,6 @@
                         <Button x:Name="BtnStop" Content="Stop" Click="BtnStop_Click" IsEnabled="False" />
                         <Button x:Name="BtnClear" Content="Clear" Click="BtnClear_Click" />
                         <Button x:Name="BtnBuild" Content="Build LUT" Click="BtnBuild_Click" IsEnabled="False" />
-                        <Button x:Name="BtnBuildAutomatic" Content="自動セクター補正" Click="BtnBuildAutomatic_Click" IsEnabled="False" />
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Grid.Column="1" Spacing="8">

@@ -114,6 +114,26 @@ public class IpcClientService
         catch { }
     }
 
+    public async Task<bool> WaitForConnectionAsync(TimeSpan timeout)
+        => await WaitForConnectionStateAsync(true, timeout).ConfigureAwait(false);
+
+    public async Task<bool> WaitForDisconnectionAsync(TimeSpan timeout)
+        => await WaitForConnectionStateAsync(false, timeout).ConfigureAwait(false);
+
+    private async Task<bool> WaitForConnectionStateAsync(bool connected, TimeSpan timeout)
+    {
+        if (_connected == connected) return true;
+
+        DateTime until = DateTime.UtcNow + timeout;
+        while (DateTime.UtcNow < until)
+        {
+            if (_connected == connected) return true;
+            await Task.Delay(100).ConfigureAwait(false);
+        }
+
+        return _connected == connected;
+    }
+
     // LUT をエンジン形式 (rs/ao/xc/yc) で直接送信
     public void SendLut(string side, CorrectionLUT lut)
     {

@@ -142,7 +142,7 @@ public class CorrectionLUT
         Smooth(5);
     }
 
-    // 自動セクター修復: 収集したサンプルから局所的な縮退を修正するLUTを構築
+    // 収集したサンプルから局所的な縮退を補うLUTを構築
     public void BuildAutomaticSectorRepair(System.Collections.Generic.List<(float rx, float ry)> samples)
     {
         var binSamples = new System.Collections.Generic.List<(float rx, float ry)>[Bins];

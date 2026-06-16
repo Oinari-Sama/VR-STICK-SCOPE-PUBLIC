@@ -14,7 +14,7 @@
                     <TextBlock x:Name="EnginePathText" Text="エンジンパス: 確認中..." Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap" />
                     <TextBlock x:Name="EngineRunText" Text="エンジン状態: 確認中" Foreground="{StaticResource TextSecondaryBrush}" />
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                        <Button x:Name="BtnStartDiagnostics" Content="診断だけ開始" Click="BtnStartDiagnostics_Click" />
+                        <Button x:Name="BtnStartDiagnostics" Content="入力表示用エンジンを開始" Click="BtnStartDiagnostics_Click" />
                         <Button x:Name="BtnStartOsc" Content="VRChatへ補正入力を送る" Click="BtnStartOsc_Click" />
                         <Button x:Name="BtnStopEngine" Content="エンジン停止" Click="BtnStopEngine_Click" />
                         <Button x:Name="BtnRefresh" Content="状態を更新" Click="BtnRefresh_Click" />
