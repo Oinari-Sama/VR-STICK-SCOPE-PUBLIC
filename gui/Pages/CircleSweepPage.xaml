@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="VRStickScope.Pages.CircleSweepPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:VRStickScope.Controls"
+    Background="Transparent">
+    <ScrollViewer Padding="24">
+        <StackPanel Spacing="16">
+            <TextBlock x:Name="PageTitle" Text="回して故障診断" FontSize="28" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
+            <TextBlock x:Name="PageHelpText" Text="画面の案内に合わせて、スティックを外周に押し付けながらゆっくり3周回します。特定方向で中心へ落ちる、角度が飛ぶ、真逆に入る症状を検出します。" TextWrapping="Wrap" Foreground="{StaticResource TextSecondaryBrush}" />
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <ToggleButton x:Name="BtnLeft" Content="Left stick" IsChecked="True" Click="BtnLeft_Click" />
+                <ToggleButton x:Name="BtnRight" Content="Right stick" Click="BtnRight_Click" />
+            </StackPanel>
+            <Grid ColumnSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Spacing="8">
+                    <Border Padding="12" Background="{StaticResource BgCardBrush}" BorderBrush="{StaticResource TextSecondaryBrush}" BorderThickness="1" CornerRadius="6">
+                        <StackPanel Spacing="4">
+                            <TextBlock x:Name="GuideTitleText" Text="次の方向" Foreground="{StaticResource TextSecondaryBrush}" />
+                            <TextBlock x:Name="GuideDirectionText" Text="計測開始を押してください" FontSize="22" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
+                            <TextBlock x:Name="GuideProgressText" Text="0.0 / 3.0 周" Foreground="{StaticResource TextSecondaryBrush}" />
+                            <TextBlock x:Name="GuideWarningText" Text="" TextWrapping="Wrap" Foreground="{StaticResource AccentRedBrush}" />
+                        </StackPanel>
+                    </Border>
+                    <controls:StickPlotControl x:Name="StickPlot" Height="300" />
+                    <TextBlock x:Name="SampleCountText" Text="Samples: 0" Foreground="{StaticResource TextSecondaryBrush}" />
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button x:Name="BtnStart" Content="Start" Click="BtnStart_Click" />
+                        <Button x:Name="BtnStop" Content="Stop" Click="BtnStop_Click" IsEnabled="False" />
+                        <Button x:Name="BtnClear" Content="Clear" Click="BtnClear_Click" />
+                        <Button x:Name="BtnBuild" Content="Build LUT" Click="BtnBuild_Click" IsEnabled="False" />
+                        <Button x:Name="BtnBuildAutomatic" Content="自動セクター補正" Click="BtnBuildAutomatic_Click" IsEnabled="False" />
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Spacing="8">
+                    <controls:PolarChartControl x:Name="PolarChart" Height="300" />
+                    <TextBlock x:Name="StatAvgR" Text="---" Foreground="{StaticResource TextSecondaryBrush}" />
+                    <TextBlock x:Name="StatRadiusVar" Text="---" Foreground="{StaticResource TextSecondaryBrush}" />
+                    <TextBlock x:Name="StatMaxAngleErr" Text="---" Foreground="{StaticResource TextSecondaryBrush}" />
+                    <TextBlock x:Name="GuidedDiagnosisText" Text="---" TextWrapping="Wrap" Foreground="{StaticResource TextPrimaryBrush}" />
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+</Page>
+

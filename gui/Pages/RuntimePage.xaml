@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="VRStickScope.Pages.RuntimePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="Transparent">
+    <ScrollViewer Padding="24">
+        <StackPanel Spacing="18" MaxWidth="760" HorizontalAlignment="Left">
+            <TextBlock x:Name="RuntimeTitle" Text="エンジン起動とVRChat出力" FontSize="28" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
+
+            <Border Background="{StaticResource BgCardBrush}" CornerRadius="8" Padding="16">
+                <StackPanel Spacing="12">
+                    <TextBlock x:Name="EngineSectionTitle" Text="診断エンジン" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
+                    <TextBlock x:Name="EnginePathText" Text="エンジンパス: 確認中..." Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap" />
+                    <TextBlock x:Name="EngineRunText" Text="エンジン状態: 確認中" Foreground="{StaticResource TextSecondaryBrush}" />
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button x:Name="BtnStartDiagnostics" Content="診断だけ開始" Click="BtnStartDiagnostics_Click" />
+                        <Button x:Name="BtnStartOsc" Content="VRChat OSC補正を開始" Click="BtnStartOsc_Click" />
+                        <Button x:Name="BtnStopEngine" Content="エンジン停止" Click="BtnStopEngine_Click" />
+                        <Button x:Name="BtnRefresh" Content="状態を更新" Click="BtnRefresh_Click" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Background="{StaticResource BgCardBrush}" CornerRadius="8" Padding="16">
+                <StackPanel Spacing="12">
+                    <TextBlock x:Name="AutoStartSectionTitle" Text="SteamVR起動時のOSC補正" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
+                    <TextBlock x:Name="AutoStartText" Text="OSC補正の自動開始: 確認中..." Foreground="{StaticResource TextSecondaryBrush}" />
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button x:Name="BtnEnableAutoStart" Content="OSC補正の自動開始を有効化" Click="BtnEnableAutoStart_Click" />
+                        <Button x:Name="BtnDisableAutoStart" Content="OSC補正の自動開始を無効化" Click="BtnDisableAutoStart_Click" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Background="{StaticResource BgCardBrush}" CornerRadius="8" Padding="16">
+                <StackPanel Spacing="8">
+                    <TextBlock x:Name="VrChatOscSectionTitle" Text="VRChat OSC出力" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
+                    <TextBlock x:Name="VrChatOscHelpText" Text="OSC出力は手動開始、または上の自動開始を有効化したSteamVR起動時だけ動きます。補正用エンジンが移動入力と右スティックの左右旋回をVRChatのOSCポート 127.0.0.1:9000 へ送ります。" Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

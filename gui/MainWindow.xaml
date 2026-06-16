@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="VRStickScope.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="VR Stick Scope - Quest Controller Correction">
+    <Grid x:Name="RootGrid" Background="{StaticResource BgDarkBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Padding="16" ColumnSpacing="12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="AppTitleText" Text="VR Stick Scope" FontSize="22" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Ellipse x:Name="StatusDot" Width="10" Height="10" Fill="{StaticResource AccentRedBrush}" />
+                <TextBlock x:Name="StatusText" Text="Engine disconnected" Foreground="{StaticResource TextSecondaryBrush}" />
+            </StackPanel>
+            <ToggleSwitch Grid.Column="2" x:Name="CorrectionToggle" Header="Correction" Toggled="CorrectionToggle_Toggled" />
+            <Button Grid.Column="3" x:Name="LanguageButton" Content="English" Click="LanguageButton_Click" />
+        </Grid>
+
+        <NavigationView x:Name="NavView"
+                        Grid.Row="1"
+                        IsSettingsVisible="False"
+                        PaneDisplayMode="Left"
+                        IsBackButtonVisible="Collapsed"
+                        SelectionChanged="NavView_SelectionChanged">
+            <NavigationView.MenuItems>
+                <NavigationViewItem x:Name="NavDashboard" Content="Dashboard" Tag="Dashboard" />
+                <NavigationViewItem x:Name="NavCircle" Content="Circle Sweep" Tag="Circle" />
+                <NavigationViewItem x:Name="NavProfiles" Content="Profiles" Tag="Profiles" />
+                <NavigationViewItem x:Name="NavRuntime" Content="Runtime" Tag="Runtime" />
+            </NavigationView.MenuItems>
+            <Frame x:Name="ContentFrame" />
+        </NavigationView>
+    </Grid>
+</Window>
+
