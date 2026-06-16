@@ -22,18 +22,30 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int) {
         return 1;
     }
 
-    HINSTANCE result = ShellExecuteW(
-        nullptr,
-        L"open",
+    std::wstring commandLine = L"\"" + guiExe.wstring() + L"\"";
+    STARTUPINFOW startupInfo{};
+    startupInfo.cb = sizeof(startupInfo);
+    PROCESS_INFORMATION processInfo{};
+
+    BOOL started = CreateProcessW(
         guiExe.c_str(),
+        commandLine.data(),
+        nullptr,
+        nullptr,
+        FALSE,
+        0,
         nullptr,
         appDir.c_str(),
-        SW_SHOWNORMAL);
+        &startupInfo,
+        &processInfo);
 
-    if (reinterpret_cast<intptr_t>(result) <= 32) {
+    if (!started) {
         MessageBoxW(nullptr, L"Failed to start app\\DiagnosticGUI.exe.", L"VR Stick Scope", MB_OK | MB_ICONERROR);
         return 1;
     }
+
+    CloseHandle(processInfo.hThread);
+    CloseHandle(processInfo.hProcess);
 
     return 0;
 }
