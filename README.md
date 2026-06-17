@@ -8,7 +8,7 @@ Inari-Kontroller は、Quest コントローラーのスティック入力を確
 
 使うだけなら、ソースコードではなく次の ZIP をダウンロードしてください。
 
-[Inari-Kontroller-v1.0.8-public.zip](https://github.com/Oinari-Sama/VR-STICK-SCOPE-PUBLIC/releases/download/v1.0.8-public/Inari-Kontroller-v1.0.8-public.zip)
+[Inari-Kontroller-v1.0.8-public.zip](https://github.com/Oinari-Sama/Inari-Kontroller/releases/download/v1.0.8-public/Inari-Kontroller-v1.0.8-public.zip)
 
 GitHub が自動で表示する `Source code (zip)` には起動用 exe が入っていません。上の ZIP を展開すると、直下に `Inari_Kontroller.exe` があります。
 
