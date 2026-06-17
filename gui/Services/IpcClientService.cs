@@ -5,9 +5,9 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using VRStickScope.Models;
+using InariKontroller.Models;
 
-namespace VRStickScope.Services;
+namespace InariKontroller.Services;
 
 public class StateUpdatedEventArgs(EngineStateMessage state) : EventArgs
 {
@@ -16,7 +16,7 @@ public class StateUpdatedEventArgs(EngineStateMessage state) : EventArgs
 
 public class IpcClientService
 {
-    public const string PipeName = "VRStickScopeEngine";
+    public const string PipeName = "InariKontrollerEngine";
 
     public event EventHandler<StateUpdatedEventArgs>? StateUpdated;
     public event EventHandler<bool>? ConnectionChanged;

@@ -1,14 +1,14 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml;
-using VRStickScope.Models;
-using VRStickScope.Services;
+using InariKontroller.Models;
+using InariKontroller.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VRStickScope.Pages;
+namespace InariKontroller.Pages;
 
 public sealed partial class CircleSweepPage : Page
 {

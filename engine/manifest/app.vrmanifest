@@ -2,14 +2,14 @@
   "source": "builtin",
   "applications": [
     {
-      "app_key": "com.oinarisama.vrstickscope.engine",
+      "app_key": "com.oinarisama.inarikontroller.engine",
       "launch_type": "binary",
-      "binary_path_windows": "VRStickScopeEngine.exe",
+      "binary_path_windows": "InariKontrollerEngine.exe",
       "arguments": "--vrchat-osc --enable-correction",
       "is_dashboard_overlay": true,
       "strings": {
         "en_us": {
-          "name": "VR Stick Scope Correction Engine",
+          "name": "Inari-Kontroller Correction Engine",
           "description": "Quest controller directional misinput correction engine"
         }
       }

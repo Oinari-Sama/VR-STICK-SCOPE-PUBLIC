@@ -24,4 +24,4 @@ Copy-Item (Join-Path $ExtractedDir "lib\win64\openvr_api.lib") (Join-Path $OpenV
 Copy-Item (Join-Path $ExtractedDir "bin\win64\openvr_api.dll") (Join-Path $OpenVRDir "bin\win64\openvr_api.dll") -Force
 
 Remove-Item -LiteralPath $TmpDir -Recurse -Force
-Write-Host "[VRStickScope] OpenVR SDK $OpenVRVersion installed under engine\thirdparty\openvr" -ForegroundColor Green
+Write-Host "[InariKontroller] OpenVR SDK $OpenVRVersion installed under engine\thirdparty\openvr" -ForegroundColor Green

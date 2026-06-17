@@ -1,8 +1,8 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using VRStickScope.Services;
+using InariKontroller.Services;
 
-namespace VRStickScope.Pages;
+namespace InariKontroller.Pages;
 
 public sealed partial class RuntimePage : Page
 {

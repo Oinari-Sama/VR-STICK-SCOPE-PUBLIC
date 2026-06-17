@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using VRStickScope.Models;
+using InariKontroller.Models;
 
-namespace VRStickScope.Services;
+namespace InariKontroller.Services;
 
 public class ProfileService
 {
@@ -20,7 +20,7 @@ public class ProfileService
     {
         _profileDir = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "VRStickScope", "Profiles");
+            "InariKontroller", "Profiles");
         Directory.CreateDirectory(_profileDir);
     }
 

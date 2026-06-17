@@ -29,7 +29,7 @@ private:
     int leftAxisIndex_ = -1;
     int rightAxisIndex_ = -1;
 
-    bool isVRStickScopeDevice(uint32_t deviceIndex) const;
+    bool isInariKontrollerDevice(uint32_t deviceIndex) const;
     uint32_t findPhysicalController(int role) const;
     int selectStickAxis(uint32_t deviceIndex, int previousAxis) const;
     void readStick(uint32_t deviceIndex, int& axisIndex, float& x, float& y, bool& touched);

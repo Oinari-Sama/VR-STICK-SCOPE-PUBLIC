@@ -1,12 +1,12 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using VRStickScope.Models;
-using VRStickScope.Services;
+using InariKontroller.Models;
+using InariKontroller.Services;
 using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
 
-namespace VRStickScope.Pages;
+namespace InariKontroller.Pages;
 
 public sealed partial class DashboardPage : Page
 {

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Page
-    x:Class="VRStickScope.Pages.CircleSweepPage"
+    x:Class="InariKontroller.Pages.CircleSweepPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="using:VRStickScope.Controls"
+    xmlns:controls="using:InariKontroller.Controls"
     Background="Transparent">
     <ScrollViewer Padding="24">
         <StackPanel Spacing="16">

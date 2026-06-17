@@ -8,7 +8,7 @@
 
 static bool isDebugLogEnabled() {
     static bool enabled = [] {
-        const char* value = std::getenv("VRSTICKSCOPE_OPENVR_DEBUG");
+        const char* value = std::getenv("InariKontroller_OPENVR_DEBUG");
         return value && value[0] != '\0' && value[0] != '0';
     }();
     return enabled;
@@ -16,7 +16,7 @@ static bool isDebugLogEnabled() {
 
 static void writeDebugLog(const std::string& line) {
     if (!isDebugLogEnabled()) return;
-    std::ofstream log("vrstickscope_openvr_debug.log", std::ios::app);
+    std::ofstream log("InariKontroller_openvr_debug.log", std::ios::app);
     if (log) log << line << "\n";
 }
 
@@ -87,7 +87,7 @@ void OpenVRManager::refreshControllerIndices() {
     writeDebugLog("selected left=" + std::to_string(leftIndex_) + " right=" + std::to_string(rightIndex_));
 }
 
-bool OpenVRManager::isVRStickScopeDevice(uint32_t deviceIndex) const {
+bool OpenVRManager::isInariKontrollerDevice(uint32_t deviceIndex) const {
     if (!vrSystem_ || deviceIndex == vr::k_unTrackedDeviceIndexInvalid) return false;
 
     char value[128] = {};
@@ -98,7 +98,7 @@ bool OpenVRManager::isVRStickScopeDevice(uint32_t deviceIndex) const {
         value,
         sizeof(value),
         &err);
-    if (err == vr::TrackedProp_Success && std::string(value).find("VRStickScope") != std::string::npos) {
+    if (err == vr::TrackedProp_Success && std::string(value).find("InariKontroller") != std::string::npos) {
         return true;
     }
 
@@ -109,7 +109,7 @@ bool OpenVRManager::isVRStickScopeDevice(uint32_t deviceIndex) const {
         value,
         sizeof(value),
         &err);
-    return err == vr::TrackedProp_Success && std::string(value).find("VRStickScope") != std::string::npos;
+    return err == vr::TrackedProp_Success && std::string(value).find("InariKontroller") != std::string::npos;
 }
 
 uint32_t OpenVRManager::findPhysicalController(int role) const {
@@ -119,14 +119,14 @@ uint32_t OpenVRManager::findPhysicalController(int role) const {
         if (!vrSystem_->IsTrackedDeviceConnected(i)) continue;
         if (vrSystem_->GetTrackedDeviceClass(i) != vr::TrackedDeviceClass_Controller) continue;
         if (static_cast<int>(vrSystem_->GetControllerRoleForTrackedDeviceIndex(i)) != role) continue;
-        if (isVRStickScopeDevice(i)) continue;
+        if (isInariKontrollerDevice(i)) continue;
         return i;
     }
 
     for (uint32_t i = 0; i < vr::k_unMaxTrackedDeviceCount; ++i) {
         if (!vrSystem_->IsTrackedDeviceConnected(i)) continue;
         if (vrSystem_->GetTrackedDeviceClass(i) != vr::TrackedDeviceClass_Controller) continue;
-        if (isVRStickScopeDevice(i)) continue;
+        if (isInariKontrollerDevice(i)) continue;
 
         vr::ETrackedPropertyError err = vr::TrackedProp_Success;
         int32_t roleHint = vrSystem_->GetInt32TrackedDeviceProperty(i, vr::Prop_ControllerRoleHint_Int32, &err);
@@ -134,7 +134,7 @@ uint32_t OpenVRManager::findPhysicalController(int role) const {
     }
 
     uint32_t fallback = vrSystem_->GetTrackedDeviceIndexForControllerRole(static_cast<vr::ETrackedControllerRole>(role));
-    if (isVRStickScopeDevice(fallback)) return vr::k_unTrackedDeviceIndexInvalid;
+    if (isInariKontrollerDevice(fallback)) return vr::k_unTrackedDeviceIndexInvalid;
     return fallback;
 }
 

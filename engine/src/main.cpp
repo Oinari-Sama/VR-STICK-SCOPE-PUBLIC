@@ -19,7 +19,7 @@
 #include <shellapi.h>
 #include <cstdlib>
 
-static constexpr const char* kSteamVrAppKey = "com.oinarisama.vrstickscope.engine";
+static constexpr const char* kSteamVrAppKey = "com.oinarisama.inarikontroller.engine";
 
 static OpenVRManager g_vr;
 static IpcServer g_ipc;
@@ -46,7 +46,7 @@ static std::filesystem::path getLocalAppData() {
 }
 
 static void initProfileDir() {
-    g_profileDir = getLocalAppData() / "VRStickScope" / "Profiles";
+    g_profileDir = getLocalAppData() / "InariKontroller" / "Profiles";
     std::filesystem::create_directories(g_profileDir);
 }
 
@@ -81,7 +81,7 @@ static bool loadLatestProfile() {
 }
 
 static void writeAutostartLog(const std::string& line) {
-    auto dir = getLocalAppData() / "VRStickScope";
+    auto dir = getLocalAppData() / "InariKontroller";
     std::filesystem::create_directories(dir);
     std::ofstream log(dir / "autostart.log", std::ios::app);
     if (log) log << line << "\n";
@@ -120,7 +120,7 @@ static std::filesystem::path writeRuntimeManifest() {
     auto exePath = getExecutablePath();
     if (exePath.empty()) return {};
 
-    auto manifestPath = exePath.parent_path() / "vrstickscope_engine.vrmanifest";
+    auto manifestPath = exePath.parent_path() / "InariKontroller_engine.vrmanifest";
     std::ofstream f(manifestPath);
     if (!f) return {};
 
@@ -130,12 +130,12 @@ static std::filesystem::path writeRuntimeManifest() {
     f << "    {\n";
     f << "      \"app_key\": \"" << kSteamVrAppKey << "\",\n";
     f << "      \"launch_type\": \"binary\",\n";
-    f << "      \"binary_path_windows\": \"VRStickScopeEngine.exe\",\n";
+    f << "      \"binary_path_windows\": \"InariKontrollerEngine.exe\",\n";
     f << "      \"arguments\": \"--vrchat-osc --enable-correction\",\n";
     f << "      \"is_dashboard_overlay\": true,\n";
     f << "      \"strings\": {\n";
     f << "        \"en_us\": {\n";
-    f << "          \"name\": \"VR Stick Scope Correction Engine\",\n";
+    f << "          \"name\": \"Inari-Kontroller Correction Engine\",\n";
     f << "          \"description\": \"Quest controller stick diagnostics and VRChat OSC correction engine\"\n";
     f << "        }\n";
     f << "      }\n";
@@ -392,12 +392,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     if (commandLineHasFlag(L"--enable-correction")) {
         g_correctionEnabled = true;
     }
-    if (const char* env_correction = std::getenv("VRSTICKSCOPE_CORRECTION_ENABLE")) {
+    if (const char* env_correction = std::getenv("InariKontroller_CORRECTION_ENABLE")) {
         if (std::string(env_correction) == "1") g_correctionEnabled = true;
     }
 
     bool enableOsc = commandLineHasFlag(L"--vrchat-osc");
-    if (const char* env_osc = std::getenv("VRSTICKSCOPE_OSC_ENABLE")) {
+    if (const char* env_osc = std::getenv("InariKontroller_OSC_ENABLE")) {
         if (std::string(env_osc) == "1") {
             enableOsc = true;
         }
@@ -406,10 +406,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     if (enableOsc) {
             std::string osc_host = "127.0.0.1";
             int osc_port = 9000;
-            if (const char* env_host = std::getenv("VRSTICKSCOPE_OSC_HOST")) {
+            if (const char* env_host = std::getenv("InariKontroller_OSC_HOST")) {
                 osc_host = env_host;
             }
-            if (const char* env_port = std::getenv("VRSTICKSCOPE_OSC_PORT")) {
+            if (const char* env_port = std::getenv("InariKontroller_OSC_PORT")) {
                 try {
                     osc_port = std::stoi(env_port);
                 } catch (...) {}

@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 
-namespace VRStickScope.Services;
+namespace InariKontroller.Services;
 
 public enum DisplayLanguage
 {

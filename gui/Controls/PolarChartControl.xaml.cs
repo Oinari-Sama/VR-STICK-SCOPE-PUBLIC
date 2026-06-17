@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Windows.UI;
 
-namespace VRStickScope.Controls;
+namespace InariKontroller.Controls;
 
 /// <summary>
 /// 左右スティックの軌跡を極座標で表示するチャート。

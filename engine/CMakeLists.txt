@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(VRStickScopeEngine VERSION 1.0.0 LANGUAGES CXX)
+project(InariKontrollerEngine VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -13,7 +13,7 @@ if(WIN32)
     set(OPENVR_LIB ${CMAKE_SOURCE_DIR}/thirdparty/openvr/lib/win64/openvr_api.lib)
 endif()
 
-add_executable(VRStickScopeEngine
+add_executable(InariKontrollerEngine
     src/main.cpp
     src/openvr_manager.cpp
     src/correction_lut.cpp
@@ -22,20 +22,20 @@ add_executable(VRStickScopeEngine
     src/osc_sender.cpp
 )
 
-add_executable(VRStickScopeLauncher WIN32
+add_executable(InariKontrollerLauncher WIN32
     src/launcher.cpp
 )
 
-set_target_properties(VRStickScopeLauncher PROPERTIES
-    OUTPUT_NAME "VRStickScope"
+set_target_properties(InariKontrollerLauncher PROPERTIES
+    OUTPUT_NAME "InariKontroller"
 )
 
 if(MSVC)
-    target_compile_options(VRStickScopeEngine PRIVATE /utf-8)
-    target_compile_options(VRStickScopeLauncher PRIVATE /utf-8)
+    target_compile_options(InariKontrollerEngine PRIVATE /utf-8)
+    target_compile_options(InariKontrollerLauncher PRIVATE /utf-8)
 endif()
 
-target_link_libraries(VRStickScopeEngine
+target_link_libraries(InariKontrollerEngine
     ${OPENVR_LIB}
     Pathcch
     shlwapi
@@ -45,9 +45,9 @@ target_link_libraries(VRStickScopeEngine
 )
 
 # Copy OpenVR DLL to the engine output directory.
-add_custom_command(TARGET VRStickScopeEngine POST_BUILD
+add_custom_command(TARGET InariKontrollerEngine POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${CMAKE_SOURCE_DIR}/thirdparty/openvr/bin/win64/openvr_api.dll
-        $<TARGET_FILE_DIR:VRStickScopeEngine>/openvr_api.dll
+        $<TARGET_FILE_DIR:InariKontrollerEngine>/openvr_api.dll
     COMMENT "Copying openvr_api.dll"
 )

@@ -1,7 +1,7 @@
 using Microsoft.UI.Xaml;
-using VRStickScope.Services;
+using InariKontroller.Services;
 
-namespace VRStickScope;
+namespace InariKontroller;
 
 public partial class App : Application
 {

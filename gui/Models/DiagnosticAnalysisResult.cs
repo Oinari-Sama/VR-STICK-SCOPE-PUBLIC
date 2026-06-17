@@ -1,4 +1,4 @@
-namespace VRStickScope.Models;
+namespace InariKontroller.Models;
 
 public enum StickIssueType
 {

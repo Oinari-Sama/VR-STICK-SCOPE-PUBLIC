@@ -1,7 +1,7 @@
-VR Stick Scope の手順書
+Inari-Kontroller の手順書
 
 1. この ZIP を右クリックして「すべて展開」。
-2. フォルダー直下の 00_START_VRStickScope.exe を起動。
+2. フォルダー直下の Inari_Kontroller.exe を起動。
 3. HMDをPCと接続した状態で、SteamVR と VRChat を起動。
 4. アバターを操作可能な状態で、入力を見る画面を開き左右スティック入力が反応することを確認してください。
 5. 「回して故障診断」を開き、「計測開始」。
@@ -18,6 +18,6 @@ VR Stick Scope の手順書
 - 現在確認できている環境は Quest 2 + Virtual Desktop + SteamVR + VRChat の組み合わせのみです。ほかの環境での動作報告や不具合報告を歓迎します。
 
 フォルダー構成:
-- 00_START_VRStickScope.exe: 起動用
+- Inari_Kontroller.exe: 起動用
 - app: アプリ本体と必要DLL
 - docs: ライセンス、第三者ソフトウェア表記、第三者ライセンス本文、解除・トラブル時の戻し方

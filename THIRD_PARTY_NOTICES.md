@@ -1,9 +1,9 @@
 # Third-Party Notices
 
-This file lists third-party components used by VR Stick Scope or included in
+This file lists third-party components used by Inari-Kontroller or included in
 the public release package.
 
-VR Stick Scope source code is released under the MIT License. The public ZIP
+Inari-Kontroller source code is released under the MIT License. The public ZIP
 also includes third-party runtime, SDK, and library components. Those
 components remain under their own license terms.
 

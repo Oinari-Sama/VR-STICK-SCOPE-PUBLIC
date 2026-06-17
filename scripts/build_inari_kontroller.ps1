@@ -38,7 +38,7 @@ $publishDir = Join-Path $Root "gui\bin\$Configuration\net8.0-windows10.0.19041.0
 if (Test-Path -LiteralPath $publishDir) {
     Remove-Item -LiteralPath $publishDir -Recurse -Force
 }
-dotnet publish (Join-Path $Root "gui\DiagnosticGUI.csproj") `
+dotnet publish (Join-Path $Root "gui\InariKontrollerGUI.csproj") `
     -c $Configuration `
     -r win-x64 `
     --self-contained `
@@ -53,7 +53,7 @@ dotnet publish (Join-Path $Root "gui\DiagnosticGUI.csproj") `
     -v:minimal
 
 if (Test-Path -LiteralPath $publishDir) {
-    Copy-Item -LiteralPath (Join-Path $Root "engine\build\$Configuration\VRStickScopeEngine.exe") -Destination $publishDir -Force
+    Copy-Item -LiteralPath (Join-Path $Root "engine\build\$Configuration\InariKontrollerEngine.exe") -Destination $publishDir -Force
     Copy-Item -LiteralPath (Join-Path $Root "engine\build\$Configuration\openvr_api.dll") -Destination $publishDir -Force
 }
 
@@ -63,7 +63,7 @@ if ($Package) {
     }
 
     $distDir = Join-Path $Root "dist"
-    $packageName = "VR-Stick-Scope-v1.0.7-public"
+    $packageName = "Inari-Kontroller-v1.0.8-public"
     $packageDir = Join-Path $distDir $packageName
     $zipPath = Join-Path $distDir "$packageName.zip"
 
@@ -81,9 +81,9 @@ if ($Package) {
     }
 
     $driverFiles = @(
-        "driver_vrstickscope.dll",
+        "driver_InariKontroller.dll",
         "driver.vrdrivermanifest",
-        "vrstickscope_profile.json"
+        "InariKontroller_profile.json"
     )
     foreach ($driverFile in $driverFiles) {
         Get-ChildItem -LiteralPath $appDir -Recurse -File -Filter $driverFile -ErrorAction SilentlyContinue |
@@ -106,7 +106,7 @@ if ($Package) {
         Where-Object { $_.Name -like ".*" -or $excludedExtensions -contains $_.Extension.ToLowerInvariant() } |
         Remove-Item -Force
 
-    Copy-Item -LiteralPath (Join-Path $Root "engine\build\$Configuration\VRStickScope.exe") -Destination (Join-Path $packageDir "00_START_VRStickScope.exe") -Force
+    Copy-Item -LiteralPath (Join-Path $Root "engine\build\$Configuration\InariKontroller.exe") -Destination (Join-Path $packageDir "Inari_Kontroller.exe") -Force
     Copy-Item -LiteralPath (Join-Path $Root "README_FIRST_JA.txt") -Destination $packageDir -Force
     Copy-Item -LiteralPath (Join-Path $Root "LICENSE") -Destination (Join-Path $docsDir "LICENSE.txt") -Force
     Copy-Item -LiteralPath (Join-Path $Root "docs\ROLLBACK_JA.md") -Destination (Join-Path $docsDir "ROLLBACK_JA.txt") -Force
@@ -124,7 +124,7 @@ if ($Package) {
     $zip = [System.IO.Compression.ZipFile]::Open($zipPath, [System.IO.Compression.ZipArchiveMode]::Create)
     try {
         $orderedFiles = @(
-            (Get-Item -LiteralPath (Join-Path $packageDir "00_START_VRStickScope.exe")),
+            (Get-Item -LiteralPath (Join-Path $packageDir "Inari_Kontroller.exe")),
             (Get-Item -LiteralPath (Join-Path $packageDir "README_FIRST_JA.txt"))
         )
         $orderedFiles += Get-ChildItem -LiteralPath $appDir -Recurse -File | Sort-Object FullName

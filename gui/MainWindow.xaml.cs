@@ -3,11 +3,11 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
-using VRStickScope.Pages;
-using VRStickScope.Services;
+using InariKontroller.Pages;
+using InariKontroller.Services;
 using System.Threading;
 
-namespace VRStickScope;
+namespace InariKontroller;
 
 public sealed partial class MainWindow : Window
 {
@@ -111,7 +111,7 @@ public sealed partial class MainWindow : Window
     {
         if (AppWindow != null)
         {
-            AppWindow.Title = App.DiagnosticUi.IsJapanese ? "VR Stick Scope - Questコントローラー補正" : "VR Stick Scope - Quest Controller Correction";
+            AppWindow.Title = App.DiagnosticUi.IsJapanese ? "Inari-Kontroller - Questコントローラー補正" : "Inari-Kontroller - Quest Controller Correction";
         }
         NavDashboard.Content = App.DiagnosticUi.GetText("Dashboard");
         NavCircle.Content = App.DiagnosticUi.GetText("CircleSweep");

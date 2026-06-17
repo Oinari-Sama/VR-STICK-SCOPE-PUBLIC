@@ -10,7 +10,7 @@
 
 class IpcServer {
 public:
-    static constexpr wchar_t PIPE_NAME[] = L"\\\\.\\pipe\\VRStickScopeEngine";
+    static constexpr wchar_t PIPE_NAME[] = L"\\\\.\\pipe\\InariKontrollerEngine";
 
     using CommandCallback = std::function<void(const std::string& jsonCmd)>;
 

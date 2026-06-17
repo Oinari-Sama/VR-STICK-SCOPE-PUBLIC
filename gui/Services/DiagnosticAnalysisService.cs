@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using VRStickScope.Models;
+using InariKontroller.Models;
 
-namespace VRStickScope.Services;
+namespace InariKontroller.Services;
 
 public sealed class DiagnosticAnalysisService
 {

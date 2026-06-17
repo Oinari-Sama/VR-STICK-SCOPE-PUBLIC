@@ -2,7 +2,7 @@ using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace VRStickScope.Models;
+namespace InariKontroller.Models;
 
 public class StickAxes
 {

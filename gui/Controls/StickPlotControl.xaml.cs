@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Windows.UI;
 
-namespace VRStickScope.Controls;
+namespace InariKontroller.Controls;
 
 public sealed partial class StickPlotControl : UserControl
 {

@@ -2,16 +2,16 @@
 
 SteamVR自動起動を解除する:
 
-1. 00_START_VRStickScope.exe を起動します。
+1. Inari_Kontroller.exe を起動します。
 2. 出力設定を開きます。
 3. 「SteamVR自動起動を解除」を押します。
-4. VR Stick Scope、SteamVR、VRChat を終了します。
+4. Inari-Kontroller、SteamVR、VRChat を終了します。
 5. SteamVR と VRChat を起動し直します。
 
 入力がおかしいと感じる場合:
 
 1. 出力設定で「VRChat出力を停止」を押します。
-2. VR Stick Scope を終了します。
+2. Inari-Kontroller を終了します。
 3. VRChat と SteamVR を終了します。
 4. SteamVR と VRChat を起動し直します。
 

@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace VRStickScope.Services;
+namespace InariKontroller.Services;
 
 public enum SteamVrAutoStartState
 {
@@ -16,7 +16,7 @@ public enum SteamVrAutoStartState
 
 public class EngineRuntimeService
 {
-    private const string EngineExeName = "VRStickScopeEngine.exe";
+    private const string EngineExeName = "InariKontrollerEngine.exe";
 
     public string? FindEnginePath()
     {
@@ -110,15 +110,15 @@ public class EngineRuntimeService
 
         if (enableOsc)
         {
-            startInfo.Environment["VRSTICKSCOPE_OSC_ENABLE"] = "1";
-            startInfo.Environment["VRSTICKSCOPE_CORRECTION_ENABLE"] = "1";
-            startInfo.Environment["VRSTICKSCOPE_OSC_HOST"] = "127.0.0.1";
-            startInfo.Environment["VRSTICKSCOPE_OSC_PORT"] = port.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            startInfo.Environment["InariKontroller_OSC_ENABLE"] = "1";
+            startInfo.Environment["InariKontroller_CORRECTION_ENABLE"] = "1";
+            startInfo.Environment["InariKontroller_OSC_HOST"] = "127.0.0.1";
+            startInfo.Environment["InariKontroller_OSC_PORT"] = port.ToString(System.Globalization.CultureInfo.InvariantCulture);
         }
         else
         {
-            startInfo.Environment["VRSTICKSCOPE_OSC_ENABLE"] = "0";
-            startInfo.Environment["VRSTICKSCOPE_CORRECTION_ENABLE"] = "0";
+            startInfo.Environment["InariKontroller_OSC_ENABLE"] = "0";
+            startInfo.Environment["InariKontroller_CORRECTION_ENABLE"] = "0";
         }
 
         Process.Start(startInfo);
@@ -160,7 +160,7 @@ public class EngineRuntimeService
         yield return Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             "Downloads",
-            "vrstickscope",
+            "InariKontroller",
             "engine",
             "build",
             "Release",

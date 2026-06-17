@@ -7,7 +7,7 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int) {
     wchar_t modulePath[MAX_PATH]{};
     DWORD length = GetModuleFileNameW(nullptr, modulePath, MAX_PATH);
     if (length == 0 || length == MAX_PATH) {
-        MessageBoxW(nullptr, L"Could not find launcher path.", L"VR Stick Scope", MB_OK | MB_ICONERROR);
+        MessageBoxW(nullptr, L"Could not find launcher path.", L"Inari-Kontroller", MB_OK | MB_ICONERROR);
         return 1;
     }
 
@@ -15,10 +15,10 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int) {
     root.remove_filename();
 
     const std::filesystem::path appDir = root / L"app";
-    const std::filesystem::path guiExe = appDir / L"DiagnosticGUI.exe";
+    const std::filesystem::path guiExe = appDir / L"InariKontrollerGUI.exe";
 
     if (!std::filesystem::exists(guiExe)) {
-        MessageBoxW(nullptr, L"app\\DiagnosticGUI.exe was not found. Please extract the whole ZIP before running.", L"VR Stick Scope", MB_OK | MB_ICONERROR);
+        MessageBoxW(nullptr, L"app\\InariKontrollerGUI.exe was not found. Please extract the whole ZIP before running.", L"Inari-Kontroller", MB_OK | MB_ICONERROR);
         return 1;
     }
 
@@ -40,7 +40,7 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int) {
         &processInfo);
 
     if (!started) {
-        MessageBoxW(nullptr, L"Failed to start app\\DiagnosticGUI.exe.", L"VR Stick Scope", MB_OK | MB_ICONERROR);
+        MessageBoxW(nullptr, L"Failed to start app\\InariKontrollerGUI.exe.", L"Inari-Kontroller", MB_OK | MB_ICONERROR);
         return 1;
     }
 
